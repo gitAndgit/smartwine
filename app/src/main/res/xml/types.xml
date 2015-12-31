@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<types
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <type
+        app:type="wine-cabinet"
+        app:name="WineCabinet"
+        app:typeIcon="@mipmap/ic_launcher">
+    </type>
+</types>

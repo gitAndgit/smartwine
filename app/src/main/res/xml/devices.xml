@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<devices
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <device
+        app:model="rwc1"
+        app:manufacturer="life"
+        app:type="wine-cabinet"
+        app:name="WineCabinet"
+        app:smartconfig="true"
+        app:smartconfigTip="提示：配置成功后，请点击配置完成"
+        app:onlineIcon="@mipmap/ic_launcher"
+        app:offlineIcon="@mipmap/ic_launcher">
+    </device>
+</devices>

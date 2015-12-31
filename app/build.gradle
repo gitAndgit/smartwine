@@ -1,0 +1,45 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 'Google Inc.:Google APIs:22'
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.sicao.smartwine"
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile files('libs/android-async-http-1.4.8.jar')
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile files('libs/gson-2.2.1.jar')
+    compile files('libs/esptouch.jar')
+    compile files('libs/jbosh-0.8.0.jar')
+    compile files('libs/SMSSDK-1.1.7.jar')
+    compile files('libs/jmdns-3.4.1.jar')
+    compile files('libs/jxmpp-core-0.4.2-beta1.jar')
+    compile files('libs/jxmpp-util-cache-0.4.2-beta1.jar')
+    compile files('libs/minidns-0.1.7.jar')
+    compile files('libs/smack-android-4.1.1.jar')
+    compile files('libs/smack-android-extensions-4.1.1.jar')
+    compile files('libs/smack-core-4.1.1.jar')
+    compile files('libs/smack-extensions-4.1.1.jar')
+    compile files('libs/smack-im-4.1.1.jar')
+    compile files('libs/smack-resolver-minidns-4.1.1.jar')
+    compile files('libs/smack-sasl-provided-4.1.1.jar')
+    compile files('libs/smack-tcp-4.1.1.jar')
+}
