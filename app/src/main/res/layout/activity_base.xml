@@ -24,20 +24,31 @@
                 android:background="@color/baseColor"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="20sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <com.sicao.smartwine.widget.CircleImageView
-                    android:id="@+id/view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_margin="15dp" />
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp" />
+
+                    <com.sicao.smartwine.widget.CircleImageView
+                        android:id="@+id/view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="right"
+                        android:layout_margin="15dp"
+                        app:border_color="#FFFFFF"
+                        app:border_width="1dp" />
+                </RelativeLayout>
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>

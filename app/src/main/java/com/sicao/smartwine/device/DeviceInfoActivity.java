@@ -15,14 +15,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
+import com.sicao.smartwine.api.ApiClient;
+import com.sicao.smartwine.device.entity.ModelEntity;
+import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.WineCabinetMetaData;
 import com.sicao.smartwine.libs.WineCabinetService;
-import com.sicao.smartwine.device.entity.ModelEntity;
 import com.sicao.smartwine.util.ApiCallBack;
-import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListCallBack;
 import com.sicao.smartwine.util.UserInfoUtil;
@@ -69,7 +71,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
     XMPPConnection mConnection;
     // 链接监听
     AbstractConnectionListener mConnectionListener;
-
+    ModelEntity entity;
 
     @Override
     public String setTitle() {
@@ -108,6 +110,19 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         mSetTemp = (TextView) findViewById(R.id.set_temp);
         //
         mWorkModel_1 = (TextView) findViewById(R.id.wine_mode);
+        //获取用户信息
+        ApiClient.getUserInfo(this, UserInfoUtil.getUID(this), UserInfoUtil.getToken(this), new ApiCallBack() {
+            @Override
+            public void response(Object object) {
+                Log.i("huahua", ((PtjUserEntity) object).getAvatar());
+                AppContext.imageLoader.displayImage(((PtjUserEntity) object).getAvatar(), rightIcon, AppContext.gallery);
+            }
+        }, new ApiException() {
+            @Override
+            public void error(String error) {
+
+            }
+        });
         //登录到智捷通
         ApiClient.login(DeviceInfoActivity.this, getString(R.string.xmpp_host), getResources().getInteger(R.integer.xmpp_port),
                 getString(R.string.service), getString(R.string.source), "sicao-" + UserInfoUtil.getUID(this),
@@ -254,8 +269,8 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                         @Override
                         public void response(Object object) {
                             try {
-                                ModelEntity entity = (ModelEntity) object;
-                                if (null != mCabinet) {
+                                entity = (ModelEntity) object;
+                                if (null != mCabinet && null != entity && !"".equals(entity.getWork_model_name())) {
                                     mWorkModel_1.setText(entity
                                             .getWork_model_name());
                                     // 酒柜的温度跟后台设置的模式温度不一致,此处以服务器为准
@@ -307,14 +322,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                     // 3,设置该台设备的数据库监听,注意切换设备时的需要切换监控
                                     selectDevice(mDevice);
                                 }
-                            } else {
-                                for (int i = 0; i < mList.size(); i++) {
-                                    if (mList.get(i).getJid()
-                                            .equals(mDeviceID)) {
-                                        mDevice = mList.get(i);
-                                        selectDevice(mDevice);
-                                    }
-                                }
                             }
                         }
                     }, new ApiException() {
@@ -330,22 +337,29 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         int id = view.getId();
         switch (id) {
             case R.id.textView13://酒柜设置
-                if (mConnectID != -1)
-                    startActivity(new Intent(this, SmartSetActivity.class));
+                if (mConnectID != -1 && !"".equals(mDeviceID))
+                    startActivityForResult(new Intent(this, SmartSetActivity.class).putExtra("smartWineName", mDevice.getName()).
+                            putExtra("smartWineMode", entity == null || "".equals(entity.getWork_model_name()) ? "手动模式" : entity.getWork_model_name()).
+                            putExtra("smartModeTemp", entity == null || "".equals(entity.getWork_model_demp()) ?
+                                    "12" : entity.getWork_model_demp()), 10088);
                 break;
             case R.id.imageView3://酒柜灯开关
                 if (mConnectID != -1 && !"".equals(mDeviceID)) {
-                    if (null != mCabinet)
-                        if (mCabinet.isLight())
+                    if (null != mCabinet) {
+                        if (mCabinet.isLight()) {
+                            Toast.makeText(DeviceInfoActivity.this, "正在关闭设备灯", Toast.LENGTH_LONG).show();
                             mCabinet.setLight(false);
-                        else
+                        } else {
+                            Toast.makeText(DeviceInfoActivity.this, "正在启动设备灯", Toast.LENGTH_LONG).show();
                             mCabinet.setLight(true);
-                    mCabinet.update();
+                        }
+                        mCabinet.update();
+                    }
                 }
                 break;
             case R.id.setting_connect://设置连接
                 if (mConnectID != -1) {
-                    startActivity(new Intent(this, ConfigActivity.class).putExtra("connectid", mConnectID));
+                    startActivityForResult(new Intent(this, ConfigActivity.class).putExtra("connectid", mConnectID), 10089);
                 }
                 break;
             case R.id.wineShop://美酒商城
@@ -360,6 +374,108 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             case R.id.yijian://意见反馈
                 Toast.makeText(DeviceInfoActivity.this, "意见反馈", Toast.LENGTH_SHORT).show();
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 10088) {//修改设备配置
+                updateCabinetView();
+                // 获取该设备的工作模式
+                if (!"".equals(mDeviceID)) {
+                    ApiClient.configWorkMode(this, UserInfoUtil.getUID(this), mDeviceID,
+                            "", "", "select", new ApiCallBack() {
+                                @Override
+                                public void response(Object object) {
+                                    try {
+                                        entity = (ModelEntity) object;
+                                        if (null != mCabinet && null != entity && !"".equals(entity.getWork_model_name())) {
+                                            mWorkModel_1.setText(entity
+                                                    .getWork_model_name());
+                                            // 酒柜的温度跟后台设置的模式温度不一致,此处以服务器为准
+                                            if (null != mCabinet
+                                                    && mCabinet.getTemp() != Integer.parseInt(entity
+                                                    .getWork_model_demp())) {
+                                                mCabinet.setTemp(Integer.parseInt(entity
+                                                        .getWork_model_demp()));
+                                                mCabinet.update();
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }, null);
+                }
+            } else if (requestCode == 10089) {//配置新设备
+                final String jid = data.getExtras().getString("new_device_id");
+                //获取设备列表,取设备ID相同的设备信息
+                ApiClient.getDeviceList(DeviceInfoActivity.this, new ApiListCallBack() {
+                    @Override
+                    public <T> void response(ArrayList<T> list) {
+                        if (list.size() <= 0) {
+                            return;
+                        }
+                        ArrayList<Device> mList = (ArrayList<Device>) list;
+                        for (Device device : mList) {
+                            if (jid.equals(device.getJid())) {
+                                selectDevice(device);
+                            }
+                        }
+                    }
+                }, new ApiException() {
+                    @Override
+                    public void error(String error) {
+                        Log.i("huahua", "获取设备列表" +
+                                "失败-----" + error);
+                        Toast.makeText(DeviceInfoActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else if (resultCode == RESULT_CANCELED) {//设备重置
+            if (null!=data&&null!=data.getExtras()&&data.getExtras().containsKey("reset_device"))
+            {
+                // 没有设备
+                mDeviceID="";
+                setDeviceID("");
+                mIsonline.setText("未连接");
+                wineLight.setImageResource(R.drawable.light_icon_close);
+                mRealTemp.setText("0℃");
+                mSetTemp.setText("0℃");
+                mWorkModel_1.setText("未设置");
+                Toast.makeText(getApplicationContext(), "设备已重置",
+                        Toast.LENGTH_LONG).show();
+                // 抓取数据库中的设备列表,默认选择打开第一台设备
+                ApiClient.getDeviceList(getApplicationContext(),
+                        new ApiListCallBack() {
+                            @Override
+                            public <T> void response(ArrayList<T> list) {
+                                @SuppressWarnings("unchecked")
+                                ArrayList<Device> mList = (ArrayList<Device>) list;
+                                if ("".equals(mDeviceID)) {
+                                    if (!mList.isEmpty()) {
+                                        // 选取第一台设备作为默认
+                                        mDevice = mList.get(0);
+                                        // 3,设置该台设备的数据库监听,注意切换设备时的需要切换监控
+                                        selectDevice(mDevice);
+                                    }
+                                } else {
+                                    for (int i = 0; i < mList.size(); i++) {
+                                        if (mList.get(i).getJid()
+                                                .equals(mDeviceID)) {
+                                            mDevice = mList.get(i);
+                                            selectDevice(mDevice);
+                                        }
+                                    }
+                                }
+                            }
+                        }, new ApiException() {
+                            @Override
+                            public void error(String error) {
+                            }
+                        });
+            }
         }
     }
 
@@ -384,7 +500,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 wineLight.setImageResource(R.drawable.light_icon_close);
             }
             mRealTemp.setText(c.getInt(c.getColumnIndex(WineCabinetMetaData.REAL_TEMP))
-                    + "°");
+                    + "℃");
             setTemp = c.getInt(c.getColumnIndex(WineCabinetMetaData.TEMP));
             mSetTemp.setText(setTemp + "℃");
         }

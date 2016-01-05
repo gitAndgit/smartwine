@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.device.entity.RegisterEntity;
-import com.sicao.smartwine.device.entity.UserEntity;
+import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
@@ -130,7 +130,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             ApiClient.login(this, phone, passwordstr, new ApiCallBack() {
                 @Override
                 public void response(Object object) {
-                    UserEntity user = (UserEntity) object;
+                    ZjtUserEntity user = (ZjtUserEntity) object;
                     UserInfoUtil.saveUID(LoginActivity.this, user.getUid());
                     UserInfoUtil.saveToken(LoginActivity.this, user.getToken());
                     UserInfoUtil.saveUserInfo(LoginActivity.this, phone, passwordstr);

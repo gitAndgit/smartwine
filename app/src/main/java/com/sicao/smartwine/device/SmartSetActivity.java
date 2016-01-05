@@ -1,9 +1,6 @@
 package com.sicao.smartwine.device;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.database.ContentObserver;
-import android.database.Cursor;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,16 +9,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.os.Handler;
+import android.widget.Toast;
 
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
-import com.sicao.smartwine.libs.WineCabinetMetaData;
+import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.libs.WineCabinetService;
+import com.sicao.smartwine.util.ApiCallBack;
+import com.sicao.smartwine.util.ApiException;
+import com.sicao.smartwine.util.UserInfoUtil;
 import com.sicao.smartwine.widget.BottomPopupWindow;
 import com.smartline.life.core.XMPPManager;
+import com.smartline.life.device.Device;
+import com.smartline.life.iot.CommandService;
+import com.smartline.life.iot.IoTService;
 
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.SmackException.NotLoggedInException;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.roster.Roster;
 
 /***
  * 酒柜设置
@@ -29,7 +37,6 @@ import org.jivesoftware.smack.XMPPConnection;
 public class SmartSetActivity extends BaseActivity implements View.OnClickListener {
     //酒柜名称
     EditText wineName;
-    String smartWineName = "";
     //工作模式名称
     TextView mWorkName;
     String workName = "";
@@ -41,15 +48,14 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
     BottomPopupWindow workTemp;
     // 设备信息
     WineCabinetService mCabinet;
-    Uri mCabinetUri;
-     //保存按钮
+    //保存按钮
     Button commit;
     //酒柜的名称
-    String getSmartWineName="";
+    String smartWineName = "";
     //酒柜的模式名称
-    String smartWineMode="";
+    String smartWineMode = "";
     //酒柜的模式温度
-    String smartModeTemp="";
+    String smartModeTemp = "";
 
     @Override
     public void onClick(View v) {
@@ -65,8 +71,6 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
                     public void onClick(String value) {
                         mWorkName.setText(value);
                         workMode.dismiss();
-                        mCabinet.setLight(false);
-                        mCabinet.update();
                     }
                 });
                 break;
@@ -81,15 +85,209 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
                         mWorkTemp.setText(value);
                         workTemp.dismiss();
                         ;
-                        mCabinet.setTemp(Integer.parseInt(value));
-                        mCabinet.setLight(true);
-                        mCabinet.update();
                     }
                 });
                 break;
             case R.id.button2://提交
-                 //检测酒柜名称是否已经做了修改
+                //检测酒柜名称是否已经做了修改
+                if (!"".equals(wineName.getText().toString().trim()) && !smartWineName.equals(wineName.getText().toString().trim())) {
+                    //修改酒柜名
+                    Device d = new Device();
+                    d.setJid(getDeviceID());
+                    ApiClient.addDevice(SmartSetActivity.this, getConnectID(), d, wineName.getText().toString().trim(), new ApiCallBack() {
+                        @Override
+                        public void response(Object object) {
+                            setResult(RESULT_OK);
+                            Toast.makeText(SmartSetActivity.this, "酒柜名称修改成功", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new ApiException() {
+                        @Override
+                        public void error(String error) {
+                            Toast.makeText(SmartSetActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                if ("".equals(mWorkName.getText().toString().trim())) {
+                    Toast.makeText(SmartSetActivity.this, "请设置酒柜模式", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //修改了酒柜模式
+                if (!smartWineMode.equals(mWorkName.getText().toString().trim())) {
+                    //修改酒柜模式对应的温度
+                    if (!"".equals(smartModeTemp)) {
+                        //该酒柜已经有工作模式,并且有对应的工作温度
+                        if (Integer.parseInt(smartModeTemp) > Integer.parseInt(mWorkTemp.getText().toString().trim())) {
+                            //温度降低
+                            for (int i = Integer.parseInt(smartModeTemp); i < Integer.parseInt(mWorkTemp.getText().toString().trim()); i--) {
+                                if (i >= Integer.parseInt(mWorkTemp.getText().toString().trim())) {
+                                    mCabinet.setTemp(i);
+                                    mCabinet.update();
+                                }
+                            }
+                            ApiClient.configWorkMode(SmartSetActivity.this, UserInfoUtil.getUID(SmartSetActivity.this),
+                                    getDeviceID(), mWorkName.getText().toString().trim(),
+                                    mWorkTemp.getText().toString().trim() , "update", new ApiCallBack() {
+                                        @Override
+                                        public void response(Object object) {
+                                            setResult(RESULT_OK);
+                                            finish();
+                                            Toast.makeText(SmartSetActivity.this, "酒柜模式修改成功", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, new ApiException() {
+                                        @Override
+                                        public void error(String error) {
+                                            Toast.makeText(SmartSetActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
 
+                        } else {
+                            //温度升高
+                            for (int i = Integer.parseInt(smartModeTemp); i <= Integer.parseInt(mWorkTemp.getText().toString().trim()); i++) {
+                                if (i <= Integer.parseInt(mWorkTemp.getText().toString().trim())) {
+                                    mCabinet.setTemp(i);
+                                    mCabinet.update();
+                                }
+                            }
+                            ApiClient.configWorkMode(SmartSetActivity.this, UserInfoUtil.getUID(SmartSetActivity.this),
+                                    getDeviceID(), mWorkName.getText().toString().trim(),
+                                    mWorkTemp.getText().toString().trim(), "update", new ApiCallBack() {
+                                        @Override
+                                        public void response(Object object) {
+                                            setResult(RESULT_OK);
+                                            finish();
+                                            Toast.makeText(SmartSetActivity.this, "酒柜模式修改成功", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, new ApiException() {
+                                        @Override
+                                        public void error(String error) {
+                                            Toast.makeText(SmartSetActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                    } else {//该酒柜没有工作模式或者说是第一次配置该设备,尚未有配置工作模式或者是数据丢失状态(概率较低)
+                        ApiClient.configWorkMode(SmartSetActivity.this, UserInfoUtil.getUID(SmartSetActivity.this),
+                                getDeviceID(), mWorkName.getText().toString().trim(),
+                                mWorkTemp.getText().toString().trim(), "insert", new ApiCallBack() {
+                                    @Override
+                                    public void response(Object object) {
+                                        setResult(RESULT_OK);
+                                        finish();
+                                        Toast.makeText(SmartSetActivity.this, "酒柜模式修改成功", Toast.LENGTH_SHORT).show();
+                                    }
+                                }, new ApiException() {
+                                    @Override
+                                    public void error(String error) {
+                                        Toast.makeText(SmartSetActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                } else {
+                    //酒柜模式没有变化
+                    if (!smartModeTemp.equals(mWorkTemp.getText().toString().trim())) {
+                        if (Integer.parseInt(smartModeTemp) > Integer.parseInt(mWorkTemp.getText().toString().trim())) {
+                            //温度降低
+                            for (int i = Integer.parseInt(smartModeTemp); i <=Integer.parseInt(mWorkTemp.getText().toString().trim()); i--) {
+                                if (i >= Integer.parseInt(mWorkTemp.getText().toString().trim())) {
+                                    mCabinet.setTemp(i);
+                                    mCabinet.update();
+                                }
+                            }
+                            //修改酒柜模式对应的温度
+                            ApiClient.configWorkMode(SmartSetActivity.this, UserInfoUtil.getUID(SmartSetActivity.this),
+                                    getDeviceID(), mWorkName.getText().toString().trim(),
+                                    mWorkTemp.getText().toString().trim(), "update", new ApiCallBack() {
+                                        @Override
+                                        public void response(Object object) {
+                                            setResult(RESULT_OK);
+                                            finish();
+                                            Toast.makeText(SmartSetActivity.this, "酒柜温度修改成功", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, new ApiException() {
+                                        @Override
+                                        public void error(String error) {
+                                            Toast.makeText(SmartSetActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                        } else {
+                            //温度升高
+                            for (int i = Integer.parseInt(smartModeTemp); i <= Integer.parseInt(mWorkTemp.getText().toString().trim()); i++) {
+                                if (i <= Integer.parseInt(mWorkTemp.getText().toString().trim())) {
+                                    mCabinet.setTemp(i);
+                                    mCabinet.update();
+                                }
+                            }
+                            //修改酒柜模式对应的温度
+                            ApiClient.configWorkMode(SmartSetActivity.this, UserInfoUtil.getUID(SmartSetActivity.this),
+                                    getDeviceID(), mWorkName.getText().toString().trim(),
+                                    mWorkTemp.getText().toString().trim(), "update", new ApiCallBack() {
+                                        @Override
+                                        public void response(Object object) {
+                                            setResult(RESULT_OK);
+                                            finish();
+                                            Toast.makeText(SmartSetActivity.this, "酒柜温度修改成功", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, new ApiException() {
+                                        @Override
+                                        public void error(String error) {
+                                            Toast.makeText(SmartSetActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                    }
+                }
+                break;
+            case R.id.view://重置
+                if (-1 != getConnectID()) {
+                    final XMPPConnection mConnection = ((XMPPManager) getApplicationContext()
+                            .getSystemService(
+                                    XMPPManager.XMPP_SERVICE))
+                            .getXMPPConnection(getConnectID());
+                    if (mConnection.isConnected()) {
+                        CommandService command = new CommandService(getDeviceID(),
+                                mConnection);
+
+                        command.restore(new IoTService.Callback() {
+                            @Override
+                            public void complete(IoTService service) {
+                                new Thread() {
+                                    public void run() {
+                                        Roster roster = Roster
+                                                .getInstanceFor(mConnection);
+                                        try {
+                                            roster.removeEntry(roster
+                                                    .getEntry(getDeviceID()));
+                                            Intent intent=new Intent();
+                                            intent.putExtra("reset_device",true);
+                                            setResult(RESULT_CANCELED, intent);
+                                            finish();
+                                        } catch (NotLoggedInException e) {
+                                            e.printStackTrace();
+                                        } catch (NoResponseException e) {
+                                            e.printStackTrace();
+                                        } catch (XMPPErrorException e) {
+                                            e.printStackTrace();
+                                        } catch (NotConnectedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    ;
+                                }.start();
+                            }
+
+                            @Override
+                            public void exception(Exception exception) {
+                                Toast.makeText(getApplicationContext(), "重置失败",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        ((XMPPManager) getApplicationContext().getSystemService(
+                                XMPPManager.XMPP_SERVICE)).connect(getConnectID());
+                    }
+
+                }
                 break;
         }
     }
@@ -112,28 +310,24 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
         if (null != mCabinet) {
             mCabinet = null;
         }
-        Cursor c = getContentResolver().query(WineCabinetMetaData.CONTENT_URI,
-                null, WineCabinetMetaData.JID + "=?",
-                new String[]{getDeviceID()}, null);
-        if (c.moveToFirst()) {
-            long id = c.getLong(c.getColumnIndex(WineCabinetMetaData._ID));
-            mCabinetUri = ContentUris.withAppendedId(
-                    WineCabinetMetaData.CONTENT_URI, id);
-        } else {
-            ContentValues values = new ContentValues();
-            values.put(WineCabinetMetaData.JID, getDeviceID());
-            mCabinetUri = getContentResolver().insert(
-                    WineCabinetMetaData.CONTENT_URI, values);
-        }
-        Log.i("huahua", "connectID=" + getConnectID() + ";deviceID=" + getDeviceID() + ";uri=" + mCabinetUri);
-        // 监听数据库中该行数据的变化
-        getContentResolver().registerContentObserver(mCabinetUri, true,
-                mContentObservera);
         XMPPConnection mConnection = ((XMPPManager) getApplicationContext()
                 .getSystemService(
                         XMPPManager.XMPP_SERVICE))
                 .getXMPPConnection(getConnectID());
         mCabinet = new WineCabinetService(getDeviceID(), mConnection);
+        //右侧重置按钮
+        rightIcon.setImageResource(R.drawable.ic_launcher);
+        rightIcon.setOnClickListener(this);
+        //
+        smartWineName = getIntent().getExtras().getString("smartWineName");
+        wineName.setText(smartWineName);
+        //酒柜的模式名称
+
+        smartWineMode = getIntent().getExtras().getString("smartWineMode");
+        mWorkName.setText(smartWineMode);
+        //酒柜的模式温度
+        smartModeTemp = getIntent().getExtras().getString("smartModeTemp");
+        mWorkTemp.setText(smartModeTemp);
     }
 
     public void init() {
@@ -142,25 +336,8 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
         mWorkTemp = (TextView) findViewById(R.id.work_mode_temp_name);
         mWorkName.setOnClickListener(this);
         mWorkTemp.setOnClickListener(this);
-        commit=(Button)findViewById(R.id.button2);
+        commit = (Button) findViewById(R.id.button2);
         commit.setOnClickListener(this);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        getContentResolver().unregisterContentObserver(mContentObservera);
-        getContentResolver().delete(mCabinetUri, null, null);
-    }
-
-    /***
-     * 监控设备行信息的变化
-     */
-    private ContentObserver mContentObservera = new ContentObserver(
-            new Handler()) {
-        @Override
-        public void onChange(boolean selfChange) {
-        }
-    };
 }
 

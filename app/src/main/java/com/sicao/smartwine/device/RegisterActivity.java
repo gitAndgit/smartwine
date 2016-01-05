@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.device.entity.RegisterEntity;
-import com.sicao.smartwine.device.entity.UserEntity;
+import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
@@ -168,7 +168,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                     ApiClient.register(RegisterActivity.this, email, password, new ApiCallBack() {
                         @Override
                         public void response(Object object) {
-                            UserEntity user = (UserEntity) object;
+                            ZjtUserEntity user = (ZjtUserEntity) object;
                             UserInfoUtil.saveUID(RegisterActivity.this, user.getUid());
                             UserInfoUtil.saveToken(RegisterActivity.this, user.getToken());
                             UserInfoUtil.saveUserInfo(RegisterActivity.this, email, password);

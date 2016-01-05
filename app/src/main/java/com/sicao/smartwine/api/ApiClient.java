@@ -13,11 +13,12 @@ import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.sicao.smartwine.device.entity.ModelEntity;
+import com.sicao.smartwine.device.entity.PtjUserEntity;
+import com.sicao.smartwine.device.entity.RegisterEntity;
+import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.DeviceUtil;
-import com.sicao.smartwine.device.entity.ModelEntity;
-import com.sicao.smartwine.device.entity.RegisterEntity;
-import com.sicao.smartwine.device.entity.UserEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListCallBack;
@@ -53,7 +54,7 @@ public class ApiClient {
 
         if (null == mHttp) {
             mHttp = new AsyncHttpClient();
-
+            mHttp.setResponseTimeout(2000);
         }
         return mHttp;
     }
@@ -179,7 +180,7 @@ public class ApiClient {
                     JSONObject object = new JSONObject(new String(bytes));
                     if (object.getBoolean("status")) {
                         JSONObject info = object.getJSONObject("info");
-                        UserEntity user = new UserEntity();
+                        ZjtUserEntity user = new ZjtUserEntity();
                         user.setUid(info.getString("uid"));
                         user.setToken(info.getString("userToken"));
                         if (null != callback)
@@ -221,7 +222,7 @@ public class ApiClient {
                     JSONObject object = new JSONObject(new String(bytes));
                     if (object.getBoolean("status")) {
                         JSONObject info = object.getJSONObject("info");
-                        UserEntity user = new UserEntity();
+                        ZjtUserEntity user = new ZjtUserEntity();
                         user.setUid(info.getString("uid"));
                         user.setToken(info.getString("userToken"));
                         if (null != callback)
@@ -526,27 +527,30 @@ public class ApiClient {
             public void run() {
                 EsptouchTask mEsptouchTask = new EsptouchTask(wifi_ssid,
                         wifi_password, context);
-                if (null != mEsptouchTask) {
-                    mEsptouchTask.execute();
-                    // 执行10秒10次的轮询数据库表
-                    int max = 10;
-                    for (int i = 0; i < max; i++) {
-                        LANServiceManager serviceManager = (LANServiceManager) context
-                                .getSystemService(LANServiceManager.LAN_SERVICE);
-                        serviceManager.discoveryLanServices();
-                        NetServiceManager nsm = (NetServiceManager) context
-                                .getSystemService(NetServiceManager.NSM_SERVICE);
-                        nsm.refreshSearchService();
-                        Thread.currentThread();
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (i == 9 && null != mEsptouchTask) {
-                            mEsptouchTask.interrupt();
+                try {
+                    if (null != mEsptouchTask) {
+                        mEsptouchTask.execute();
+                        // 执行10秒10次的轮询数据库表
+                        int max = 10;
+                        for (int i = 0; i < max; i++) {
+                            LANServiceManager serviceManager = (LANServiceManager) context
+                                    .getSystemService(LANServiceManager.LAN_SERVICE);
+                            serviceManager.discoveryLanServices();
+                            NetServiceManager nsm = (NetServiceManager) context
+                                    .getSystemService(NetServiceManager.NSM_SERVICE);
+                            nsm.refreshSearchService();
+                            Thread.currentThread();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (i == 9 && null != mEsptouchTask) {
+                                mEsptouchTask.interrupt();
+                            }
                         }
                     }
+                } catch (Exception e) {
                 }
             }
         }.start();
@@ -598,6 +602,65 @@ public class ApiClient {
                                 callback.response(entity);
                             }
                         }
+                    } else {
+                        Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException exception) {
+                    exception.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception)
+                    exception.error(new String(bytes));
+            }
+        });
+    }
+
+    /**
+     * 获取用户的个人信息接口
+     *
+     * @param context   上下文对象
+     * @param uid       用户uid
+     * @param token     用户token
+     * @param callBack  执行OK回调对象
+     * @param exception 执行失败回调对象
+     */
+    public static void getUserInfo(final Context context, final String uid, final String token,
+                                   final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getProfileInfo?userToken=" + token + "&uid=" + uid;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+/**
+ *{
+ "status": true,
+ "error_code": 0,
+ "info": {
+ "uid": "1231915",
+ "avatar": "http:\/\/www.putaoji.com\/Uploads\/Avatar\/qqAvatar\/555c9c41abb81_128_128.jpg",
+ "nickname": "niti",
+ "signature": "爱美酒.",
+ "email": "",
+ "mobile": "18818689897",
+ "score": "10",
+ "sex": "f",
+ "birthday": "0000-00-00",
+ "title": "Lv1 实习"
+ "auth_type": "0",
+ }
+ }
+ *
+ */
+                Log.i("huahua", new String(bytes));
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        PtjUserEntity entity = new Gson().fromJson(object.getJSONObject("info").toString(), PtjUserEntity.class);
+                        if (null != callBack)
+                            callBack.response(entity);
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }

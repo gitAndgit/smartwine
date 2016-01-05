@@ -23,7 +23,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected int mConnectID = -1;
     //当前设备ID
     protected String mDeviceID = "";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

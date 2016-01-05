@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by techssd on 2015/12/24.
  */
-public class UserEntity implements Serializable{
+public class ZjtUserEntity implements Serializable{
     String uid;
     String token;
     String nickname;

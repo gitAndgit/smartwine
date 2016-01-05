@@ -135,51 +135,54 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                     new ApiListCallBack() {
                         @Override
                         public <T> void response(ArrayList<T> list) {
-                            Log.i("huahua","发现设备列表----"+list.size());
+                            Log.i("huahua", "发现设备列表----" + list.size());
                             @SuppressWarnings("unchecked")
                             ArrayList<Device> mlist = (ArrayList<Device>) list;
                             if (!mlist.isEmpty()) {
-                                for (final Device d : mlist) {
-                                    Log.i("huahua","发现设备列表----"+d.toString());
-                                    if (null != wifi) {
-                                        if (-1 != mConnectID) {
-                                            Log.i("huahua","发现设备列表--连接ID--"+mConnectID);
-                                            ApiClient
-                                                    .addDevice(
-                                                            getApplicationContext(),
-                                                            mConnectID,
-                                                            d,
-                                                            "新朝智能酒柜",
-                                                            new ApiCallBack() {
-                                                                @Override
-                                                                public void response(
-                                                                        Object object) {
+                                final Device d = mlist.get(0);
+                                Log.i("huahua", "发现设备列表----" + d.toString());
+                                if (null != wifi) {
+                                    if (-1 != mConnectID) {
+                                        Log.i("huahua", "发现设备列表--连接ID--" + mConnectID);
+                                        ApiClient
+                                                .addDevice(
+                                                        getApplicationContext(),
+                                                        mConnectID,
+                                                        d,
+                                                        "新朝智能酒柜",
+                                                        new ApiCallBack() {
+                                                            @Override
+                                                            public void response(
+                                                                    Object object) {
 
-                                                                    //设置模式--------------------
-                                                                    ApiClient
-                                                                            .configWorkMode(
-                                                                                    ConfigActivity.this,
-                                                                                    UserInfoUtil
-                                                                                            .getUID(ConfigActivity.this),
-                                                                                    d.getJid(),
-                                                                                    "手动模式",
-                                                                                    "12",
-                                                                                    "insert",
-                                                                                    null,
-                                                                                    null);
-                                                                }
-                                                            },
-                                                            new ApiException() {
-                                                                @Override
-                                                                public void error(
-                                                                        String error) {
-                                                                    Toast.makeText(ConfigActivity.this, error + "", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
-                                        }
+                                                                //设置模式--------------------
+                                                                ApiClient
+                                                                        .configWorkMode(
+                                                                                ConfigActivity.this,
+                                                                                UserInfoUtil
+                                                                                        .getUID(ConfigActivity.this),
+                                                                                d.getJid(),
+                                                                                "手动模式",
+                                                                                "12",
+                                                                                "insert",
+                                                                                null,
+                                                                                null);
+                                                            }
+                                                        },
+                                                        new ApiException() {
+                                                            @Override
+                                                            public void error(
+                                                                    String error) {
+                                                                Toast.makeText(ConfigActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
                                     }
                                 }
+
                                 // 关闭页面，进入设备列表页面
+                                Intent intent = new Intent();
+                                intent.putExtra("new_device_id", d.getJid());
+                                setResult(RESULT_OK, intent);
                                 finish();
                             }
 
@@ -193,6 +196,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                     });
         }
     };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
