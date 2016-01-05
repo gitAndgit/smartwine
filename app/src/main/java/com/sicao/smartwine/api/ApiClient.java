@@ -45,7 +45,6 @@ import org.jxmpp.util.XmppStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * 用于执行网络请求部分
@@ -65,6 +64,14 @@ class ApiClient {
         return mHttp;
     }
 
+    public static boolean status(JSONObject object) {
+        try {
+            return status(object);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /***
      * 注册时获取手机验证码(葡萄集)
      *
@@ -79,7 +86,6 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
                 /**
                  * {
                  "status": true,
@@ -89,15 +95,16 @@ class ApiClient {
                  */
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         if (null != callBack) {
                             callBack.response("success");
                         }
+                        return;
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
 
             }
@@ -107,6 +114,7 @@ class ApiClient {
                 if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -127,7 +135,7 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
+
                 /**
                  * {
                  "status": true,
@@ -137,16 +145,16 @@ class ApiClient {
                  */
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         if (null != callback) {
                             callback.response("success");
-
                         }
+                        return;
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
             }
 
@@ -155,6 +163,7 @@ class ApiClient {
                 if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -176,20 +185,9 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
-                /**
-                 * {
-                 "status": true,
-                 "error_code": 0,
-                 "info": {
-                 "uid": "1111",
-                 "userToken": "YuMjAC0wlZqK1i3EOyxTmFkr8QBsaNX2tgpb6cfD"
-                 }
-                 }
-                 */
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         JSONObject info = object.getJSONObject("info");
                         ZjtUserEntity user = new ZjtUserEntity();
                         user.setUid(info.getString("uid"));
@@ -197,11 +195,12 @@ class ApiClient {
                         if (null != callback) {
                             callback.response(user);
                         }
+                        return;
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
             }
 
@@ -210,6 +209,7 @@ class ApiClient {
                 if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -230,10 +230,10 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
+
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         JSONObject info = object.getJSONObject("info");
                         ZjtUserEntity user = new ZjtUserEntity();
                         user.setUid(info.getString("uid"));
@@ -241,11 +241,12 @@ class ApiClient {
                         if (null != callback) {
                             callback.response(user);
                         }
+                        return;
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
             }
 
@@ -254,6 +255,7 @@ class ApiClient {
                 if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
 
@@ -277,7 +279,7 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
+
                 /**
                  * { “code”: 200, “message”:”注册成功” }
                  */
@@ -286,6 +288,7 @@ class ApiClient {
                 if (null != callback) {
                     callback.response(entity);
                 }
+                return;
             }
 
             @Override
@@ -293,6 +296,7 @@ class ApiClient {
                 if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -338,6 +342,7 @@ class ApiClient {
                                 if (null != callBack) {
                                     callBack.response(connId);
                                 }
+                                return;
                             }
 
                             @Override
@@ -346,6 +351,7 @@ class ApiClient {
                                         && null != e.getMessage()) {
                                     exception.error(e.getMessage());
                                 }
+                                return;
                             }
                         });
             }
@@ -407,10 +413,12 @@ class ApiClient {
             if (null != callback) {
                 callback.response(mList);
             }
+            return;
         } catch (Exception e) {
             if (null != e && null != exception) {
                 exception.error(e.getMessage() + "");
             }
+            return;
         }
     }
 
@@ -437,10 +445,12 @@ class ApiClient {
             if (null != callback) {
                 callback.response(data);
             }
+            return;
         } catch (Exception e) {
             if (null != exception && null != e && null != e.getMessage()) {
                 exception.error(e.getMessage());
             }
+            return;
         }
     }
 
@@ -461,7 +471,9 @@ class ApiClient {
                     null, null, null, null);
             ArrayList<Device> mlist = new ArrayList<Device>();
             if (null != cursor && cursor.moveToFirst()) {
+
                 do {
+
                     // 该状态表示该设备在网络服务器上已经配置完毕，但是还没有添加到我的设备列表里面
                     if (!DeviceMetaData.Status.WAN.equals(cursor
                             .getString(cursor
@@ -489,17 +501,20 @@ class ApiClient {
                         device.setName(name);
                         mlist.add(device);
                     }
+
                 } while (cursor.moveToNext());
 
             }
             cursor.close();
-            if (null != callback){
+            if (null != callback) {
                 callback.response(mlist);
             }
+            return;
         } catch (Exception e) {
-            if (null != e && null != exception){
+            if (null != e && null != exception) {
                 exception.error(e.getMessage() + "");
             }
+            return;
         }
     }
 
@@ -523,19 +538,21 @@ class ApiClient {
             Roster roster = Roster.getInstanceFor(mXMPPConnection);
             try {
                 roster.createEntry(bareJid, saveName, new String[]{"我的设备"});
-                if (null != callback){
+                if (null != callback) {
                     callback.response(true);
                 }
+                return;
             } catch (Exception e) {
-                if (null != e && null != exception)
-                {
+                if (null != e && null != exception) {
                     exception.equals(e.getMessage());
                 }
+                return;
             }
         } else {
-            if (null != exception){
+            if (null != exception) {
                 exception.equals("连接异常");
             }
+            return;
         }
 
     }
@@ -574,6 +591,7 @@ class ApiClient {
                             }
                             if (i == 9 && null != mEsptouchTask) {
                                 mEsptouchTask.interrupt();
+                                return;
                             }
                         }
                     }
@@ -595,25 +613,25 @@ class ApiClient {
      * @param callback   执行OK回调对象
      * @param exception  执行失败回调对象
      */
-    public static void configWorkMode(final Context context, final String uid,
-                                      final String deviceId, final String model_name,
-                                      final String model_temp, final String action,
+    public static void configWorkMode(final Context context, String uid,
+                                      String deviceId, String model_name,
+                                      String model_temp, final String action,
                                       final ApiCallBack callback, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = "http://www.putaoji.com/Apiv5/App/smartWine";
         RequestParams params = new RequestParams();
         params.put("uid", uid);
         params.put("act", action);
-        params.put("device_id", uid);
+        params.put("device_id", deviceId);
         params.put("work_model_name", model_name);
         params.put("work_model_demp", model_temp);
         httpClient.post(url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
+
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         if ("insert".equals(action) || "update".equals(action)) {
                             //插入/更新
                             if (null != callback) {
@@ -628,12 +646,13 @@ class ApiClient {
                             if (null != callback) {
                                 callback.response(entity);
                             }
+                            return;
                         }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
             }
 
@@ -642,6 +661,7 @@ class ApiClient {
                 if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -662,46 +682,28 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                /**
-                 * {
-                 "status": true,
-                 "error_code": 0,
-                 "info": {
-                 "uid": "1231915",
-                 "avatar": "http:\/\/www.putaoji.com\/Uploads\/Avatar\/qqAvatar\/555c9c41abb81_128_128.jpg",
-                 "nickname": "niti",
-                 "signature": "爱美酒.",
-                 "email": "",
-                 "mobile": "18818689897",
-                 "score": "10",
-                 "sex": "f",
-                 "birthday": "0000-00-00",
-                 "title": "Lv1 实习"
-                 "auth_type": "0",
-                 }
-                 }
-                 */
-                Log.i("huahua", new String(bytes));
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         PtjUserEntity entity = new Gson().fromJson(object.getJSONObject("info").toString(), PtjUserEntity.class);
-                        if (null != callBack){
+                        if (null != callBack) {
                             callBack.response(entity);
                         }
+                        return;
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
             }
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception){
+                if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -719,10 +721,10 @@ class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                Log.i("huahua", new String(bytes));
+
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         ArrayList<WineLibraryEntity> mList = new ArrayList<WineLibraryEntity>();
                         JSONArray array = object
                                 .getJSONArray("info");
@@ -734,22 +736,24 @@ class ApiClient {
                                             WineLibraryEntity.class);
                             mList.add(entity);
                         }
-                        if (null != callBack){
+                        if (null != callBack) {
                             callBack.response(mList);
                         }
+                        return;
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                     Log.i("ApiClient","sicao-"+exception.getMessage());
+                    Log.i("ApiClient", "sicao-" + exception.getMessage());
                 }
             }
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception){
+                if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -796,7 +800,7 @@ class ApiClient {
             public void onSuccess(int k, Header[] headers, byte[] bytes) {
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         JSONObject info = object.getJSONObject("info");
                         JSONArray array = info.getJSONArray("list");
                         ArrayList<WineEntity> list = new ArrayList<WineEntity>();
@@ -815,6 +819,7 @@ class ApiClient {
                         if (null != callBack) {
                             callBack.response(list);
                         }
+                        return;
                     } else {
                         Log.e("putaoji",
                                 "wine list error:"
@@ -827,9 +832,10 @@ class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception){
+                if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
@@ -851,17 +857,8 @@ class ApiClient {
             @Override
             public void onSuccess(int k, Header[] headers, byte[] bytes) {
                 try {
-                    /***
-                     * {"status":true,"error_code":0,"info":[{"name":"价格","sub":
-                     * ["全部","50以下","51-99","100-199","200-499","500-999",
-                     * "1000+"
-                     * ]},{"name":"品类","sub":["全部","红葡萄酒","白葡萄酒","起泡酒","其他"
-                     * ]},{"name"
-                     * :"产地","sub":["全部","法国","意大利","西班牙","德国","美国","澳大利亚"
-                     * ,"智利","阿根廷","其他"]}]}
-                     */
                     JSONObject object = new JSONObject(new String(bytes));
-                    if (object.getBoolean("status")) {
+                    if (status(object)) {
                         JSONArray array = object.getJSONArray("info");
                         ArrayList<ClassTypeEntity> list = new ArrayList<ClassTypeEntity>();
                         for (int i = 0; i < array.length(); i++) {
@@ -883,6 +880,7 @@ class ApiClient {
                         if (null != callBack) {
                             callBack.response(list);
                         }
+                        return;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -891,9 +889,10 @@ class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception){
+                if (null != exception) {
                     exception.error(new String(bytes));
                 }
+                return;
             }
         });
     }
