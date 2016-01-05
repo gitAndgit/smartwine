@@ -45,12 +45,13 @@ import org.jxmpp.util.XmppStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 用于执行网络请求部分
  * Created by mingqi'li on 2015/12/21.
  */
-public class ApiClient {
+class ApiClient {
     private static String URL = "http://www.putaoji.com/Apiv5/";
     //请求帮助类
     private static AsyncHttpClient mHttp;
@@ -96,7 +97,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
 
             }
@@ -145,7 +146,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
             }
 
@@ -200,7 +201,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
             }
 
@@ -244,7 +245,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
             }
 
@@ -632,7 +633,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
             }
 
@@ -692,7 +693,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
             }
 
@@ -740,7 +741,7 @@ public class ApiClient {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException exception) {
-                    exception.printStackTrace();
+                     Log.i("ApiClient","sicao-"+exception.getMessage());
                 }
             }
 
