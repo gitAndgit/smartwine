@@ -91,7 +91,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".shop.IndexActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".shop.ShopActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".shop.ShopDetailActivity"></activity>
     </application>
 
 </manifest>

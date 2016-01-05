@@ -1,5 +1,6 @@
 package com.sicao.smartwine.shop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -53,9 +54,9 @@ public class IndexActivity extends BaseActivity {
         mAdapter.setListener(new ItemListener() {
             @Override
             public void item(WineLibraryEntity entity) {
-//                startActivity(new Intent(IndexActivity.this,
-//                        WineLibraryActivity.class).putExtra("name",
-//                        entity.getTitle()).putExtra("id", entity.getId()));
+                startActivity(new Intent(IndexActivity.this,
+                        ShopActivity.class).putExtra("name",
+                        entity.getTitle()).putExtra("id", entity.getId()));
             }
         });
     }

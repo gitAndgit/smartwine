@@ -8,9 +8,11 @@
     <color name="text_color_64">#646464</color>
     <color name="baseColor">#ad1c79</color>
     <color name="black">#000000</color>
+    <color name="write">#FFFFFF</color>
     <color name="get_code_color">#E0494A</color>
     <color name="blue">#030cfc</color>
-
+    <color name="p2refresh_text">#000000</color>
     <color name="black_overlay">#66000000</color>
     <color name="C7C7C7">#C7C7C7</color>
+    <color name="color_333">#333333</color>
 </resources>

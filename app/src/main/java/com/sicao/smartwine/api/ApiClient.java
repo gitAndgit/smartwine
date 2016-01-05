@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.espressif.iot.esptouch.EsptouchTask;
@@ -19,6 +20,8 @@ import com.sicao.smartwine.device.entity.RegisterEntity;
 import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.DeviceUtil;
+import com.sicao.smartwine.shop.entity.ClassTypeEntity;
+import com.sicao.smartwine.shop.entity.WineEntity;
 import com.sicao.smartwine.shop.entity.WineLibraryEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
@@ -680,7 +683,7 @@ public class ApiClient {
     }
 
     /***
-     * 获取美酒商城首页展示数据
+     * 获取美酒商城首页展示数据(葡萄集)
      *
      * @param context   上下文对象
      * @param callBack  执行OK回调对象
@@ -688,7 +691,7 @@ public class ApiClient {
      */
     public static void getShopIndex(final Context context, final ApiListCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
-        String url=URL+"App/getClassify?userToken="+ UserInfoUtil.getToken(context);
+        String url = URL + "App/getClassify?userToken=" + UserInfoUtil.getToken(context);
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -725,4 +728,145 @@ public class ApiClient {
         });
     }
 
+    /***
+     * 获取美酒商城下级页面的美酒列表数据(葡萄集)
+     *
+     * @param page       分页页码数
+     * @param row        每页条目数
+     * @param context    上下文对象
+     * @param pos        位置  值为(0默认值 1美酒库)
+     * @param name       商品名称,搜索时该字段生效
+     * @param cat_id     分类  值为(美酒套餐 4 其他 0)
+     * @param classify   分类ID组  (1,23  [注意：搜索传0])
+     * @param attr       商品属性  (红葡萄酒,白葡萄酒,起泡酒,其他【多个用逗号隔开】)
+     * @param priceScope 价格筛选
+     * @param originArea 地区筛选
+     * @param wineType   品类筛选
+     * @param callBack   执行OK回调对象
+     * @param exception  执行失败回调对象
+     */
+    public static void getShopList(final int page, final int row,
+                                   final Context context, final String pos, final String name,
+                                   final String cat_id, final String classify, final String attr,
+                                   final String priceScope, final String originArea,
+                                   final String wineType, final ApiListCallBack callBack,
+                                   final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getGoodsList";
+        RequestParams params = new RequestParams();
+        params.put("userToken", UserInfoUtil.getToken(context));
+        params.put("page", page + "");
+        params.put("row", row + "");
+        params.put("cat_id", cat_id);
+        params.put("poso", pos);
+        params.put("name", "");
+        params.put("classify", classify);
+        params.put("attr", attr);
+        params.put("priceScope", priceScope);
+        params.put("originArea", originArea);
+        params.put("wineType", wineType);
+        httpClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int k, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        JSONObject info = object.getJSONObject("info");
+                        JSONArray array = info.getJSONArray("list");
+                        ArrayList<WineEntity> list = new ArrayList<WineEntity>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject wine = array.getJSONObject(i);
+                            WineEntity entity = new WineEntity();
+                            entity.setId(wine.getString("id"));
+                            entity.setWineName(wine.getString("name"));
+                            entity.setWineImg(wine.getString("icon"));
+                            entity.setPrice(wine
+                                    .getString("current_price"));
+                            entity.setBuy_address(wine
+                                    .getString("buy_address"));
+                            list.add(entity);
+                        }
+                        if (null != callBack) {
+                            callBack.response(list);
+                        }
+                    } else {
+                        Log.e("putaoji",
+                                "wine list error:"
+                                        + object.getString("info"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception)
+                    exception.error(new String(bytes));
+            }
+        });
+    }
+
+    /***
+     * 获取美酒列表的筛选条件数据(葡萄集)
+     *
+     * @param name
+     * @param sub       子筛选
+     * @param callBack  执行OK回调对象
+     * @param exception 执行失败回调对象
+     */
+    public static void getClassify(final Context context, final String name, final String sub,
+                                   final ApiListCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getDealAttr?userToken="
+                + UserInfoUtil.getToken(context) + "&name=" + name + "&sub=" + sub;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int k, Header[] headers, byte[] bytes) {
+                try {
+                    /***
+                     * {"status":true,"error_code":0,"info":[{"name":"价格","sub":
+                     * ["全部","50以下","51-99","100-199","200-499","500-999",
+                     * "1000+"
+                     * ]},{"name":"品类","sub":["全部","红葡萄酒","白葡萄酒","起泡酒","其他"
+                     * ]},{"name"
+                     * :"产地","sub":["全部","法国","意大利","西班牙","德国","美国","澳大利亚"
+                     * ,"智利","阿根廷","其他"]}]}
+                     */
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        JSONArray array = object.getJSONArray("info");
+                        ArrayList<ClassTypeEntity> list = new ArrayList<ClassTypeEntity>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject subs = array.getJSONObject(i);
+                            ClassTypeEntity entity = new ClassTypeEntity();
+                            entity.setName(subs.getString("name"));
+                            // sub
+                            JSONArray sub = subs.getJSONArray("sub");
+                            ClassTypeEntity[] sublist = new ClassTypeEntity[sub
+                                    .length()];
+                            for (int j = 0; j < sub.length(); j++) {
+                                ClassTypeEntity entity1 = new ClassTypeEntity();
+                                entity1.setName(sub.getString(j));
+                                sublist[j] = entity1;
+                            }
+                            entity.setSubs(sublist);
+                            list.add(entity);
+                        }
+                        if (null!=callBack){
+                            callBack.response(list);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception)
+                    exception.error(new String(bytes));
+            }
+        });
+    }
 }
