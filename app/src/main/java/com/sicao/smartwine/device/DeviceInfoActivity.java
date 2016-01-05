@@ -24,6 +24,7 @@ import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.WineCabinetMetaData;
 import com.sicao.smartwine.libs.WineCabinetService;
+import com.sicao.smartwine.shop.IndexActivity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListCallBack;
@@ -363,7 +364,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.wineShop://美酒商城
-                Toast.makeText(DeviceInfoActivity.this, "美酒商城", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, IndexActivity.class));
                 break;
             case R.id.drinkWine://品酒行动
                 Toast.makeText(DeviceInfoActivity.this, "品酒行动", Toast.LENGTH_SHORT).show();

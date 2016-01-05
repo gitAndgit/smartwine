@@ -2,6 +2,8 @@ package com.sicao.smartwine;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -19,11 +21,21 @@ public class AppContext extends LifeApplication {
 
     // 酒柜部分
     private DeviceDiscoveryManager manager;
+    //图片加载库
     public static ImageLoader imageLoader = ImageLoader.getInstance();
+    //手机分辨率参数
+    /** 窗口管理 **/
+    private WindowManager mManager = null;
+    /** 屏幕数据 **/
+    public static DisplayMetrics metrics = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        // 初始化屏幕参数
+        mManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        metrics = new DisplayMetrics();
+        mManager.getDefaultDisplay().getMetrics(metrics);
         // 酒柜部分
         DeviceUtil.loadConfig(getApplicationContext(), R.xml.devices);
         DeviceUtil.loadConfigType(getApplicationContext(), R.xml.types);

@@ -89,7 +89,9 @@
         <activity
             android:name=".device.SmartSetActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".shop.IndexActivity"></activity>
+        <activity
+            android:name=".shop.IndexActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

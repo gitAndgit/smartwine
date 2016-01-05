@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#FFFFFF"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:background="#F9F6F7"
+            android:gravity="center|left"
+            android:padding="10dp"
+            android:text="送亲友"
+            android:textColor="#3f3f3f"
+            android:textSize="14sp" />
+
+        <com.sicao.smartwine.widget.NoScrollGridView
+            android:id="@+id/noScrollGridView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView1"
+            android:background="#EDEDED"
+            android:horizontalSpacing="1dp"
+            android:numColumns="2"
+            android:verticalSpacing="1dp" >
+        </com.sicao.smartwine.widget.NoScrollGridView>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -19,10 +19,12 @@ import com.sicao.smartwine.device.entity.RegisterEntity;
 import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.DeviceUtil;
+import com.sicao.smartwine.shop.entity.WineLibraryEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListCallBack;
 import com.sicao.smartwine.util.MD5;
+import com.sicao.smartwine.util.UserInfoUtil;
 import com.smartline.life.core.LANServiceManager;
 import com.smartline.life.core.NetServiceManager;
 import com.smartline.life.core.XMPPManager;
@@ -34,6 +36,7 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jxmpp.util.XmppStringUtils;
@@ -396,7 +399,7 @@ public class ApiClient {
     }
 
     /***
-     * 获取WIFI列表数据
+     * 获取WIFI列表数据(智捷通)
      *
      * @param context   上下文对象
      * @param callback  执行OK时回调对象
@@ -424,7 +427,7 @@ public class ApiClient {
     }
 
     /**
-     * 获取发现设备列表数据
+     * 获取发现设备列表数据(智捷通)
      *
      * @param context   上下文对象
      * @param callback  执行OK回调对象
@@ -481,7 +484,7 @@ public class ApiClient {
     }
 
     /**
-     * 将刚配置好的设备添加到我的设备列表里面
+     * 将刚配置好的设备添加到我的设备列表里面(智捷通)
      *
      * @param context   上下文对象
      * @param connectid XMPPConnection连接对象id
@@ -514,7 +517,7 @@ public class ApiClient {
     }
 
     /***
-     * 向设备发送UDP数据包(无结果返回)40s
+     * 向设备发送UDP数据包(无结果返回)40s(智捷通)
      *
      * @param context       上下文对象
      * @param wifi_ssid     WIFI名称
@@ -557,7 +560,7 @@ public class ApiClient {
     }
 
     /***
-     * 配置设备的工作模式
+     * 配置设备的工作模式(葡萄集)
      *
      * @param context    上下文对象
      * @param uid        用户uid
@@ -619,7 +622,7 @@ public class ApiClient {
     }
 
     /**
-     * 获取用户的个人信息接口
+     * 获取用户的个人信息接口(葡萄集)
      *
      * @param context   上下文对象
      * @param uid       用户uid
@@ -634,26 +637,25 @@ public class ApiClient {
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-/**
- *{
- "status": true,
- "error_code": 0,
- "info": {
- "uid": "1231915",
- "avatar": "http:\/\/www.putaoji.com\/Uploads\/Avatar\/qqAvatar\/555c9c41abb81_128_128.jpg",
- "nickname": "niti",
- "signature": "爱美酒.",
- "email": "",
- "mobile": "18818689897",
- "score": "10",
- "sex": "f",
- "birthday": "0000-00-00",
- "title": "Lv1 实习"
- "auth_type": "0",
- }
- }
- *
- */
+                /**
+                 * {
+                 "status": true,
+                 "error_code": 0,
+                 "info": {
+                 "uid": "1231915",
+                 "avatar": "http:\/\/www.putaoji.com\/Uploads\/Avatar\/qqAvatar\/555c9c41abb81_128_128.jpg",
+                 "nickname": "niti",
+                 "signature": "爱美酒.",
+                 "email": "",
+                 "mobile": "18818689897",
+                 "score": "10",
+                 "sex": "f",
+                 "birthday": "0000-00-00",
+                 "title": "Lv1 实习"
+                 "auth_type": "0",
+                 }
+                 }
+                 */
                 Log.i("huahua", new String(bytes));
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
@@ -676,4 +678,51 @@ public class ApiClient {
             }
         });
     }
+
+    /***
+     * 获取美酒商城首页展示数据
+     *
+     * @param context   上下文对象
+     * @param callBack  执行OK回调对象
+     * @param exception 执行失败回调对象
+     */
+    public static void getShopIndex(final Context context, final ApiListCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url=URL+"App/getClassify?userToken="+ UserInfoUtil.getToken(context);
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                Log.i("huahua", new String(bytes));
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        ArrayList<WineLibraryEntity> mList = new ArrayList<WineLibraryEntity>();
+                        JSONArray array = object
+                                .getJSONArray("info");
+                        for (int j = 0; j < array.length(); j++) {
+                            WineLibraryEntity entity = new Gson()
+                                    .fromJson(array
+                                                    .getJSONObject(j)
+                                                    .toString(),
+                                            WineLibraryEntity.class);
+                            mList.add(entity);
+                        }
+                        if (null != callBack)
+                            callBack.response(mList);
+                    } else {
+                        Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException exception) {
+                    exception.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception)
+                    exception.error(new String(bytes));
+            }
+        });
+    }
+
 }

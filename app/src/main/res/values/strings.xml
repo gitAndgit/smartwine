@@ -41,4 +41,5 @@
         <item>14</item>
         <item>15</item>
     </string-array>
+    <string name="title_activity_shop_index_info">美酒商城</string>
 </resources>

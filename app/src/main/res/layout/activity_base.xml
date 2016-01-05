@@ -36,6 +36,7 @@
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
                         android:textColor="#FFFFFF"
+                        android:layout_marginLeft="-10dp"
                         android:textSize="20sp" />
 
                     <com.sicao.smartwine.widget.CircleImageView
