@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.espressif.iot.esptouch.EsptouchTask;
@@ -90,8 +89,9 @@ public class ApiClient {
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
                     if (object.getBoolean("status")) {
-                        if (null != callBack)
+                        if (null != callBack) {
                             callBack.response("success");
+                        }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
@@ -103,8 +103,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception) {
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -136,8 +137,10 @@ public class ApiClient {
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
                     if (object.getBoolean("status")) {
-                        if (null != callback)
+                        if (null != callback) {
                             callback.response("success");
+
+                        }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
@@ -148,8 +151,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception) {
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -189,8 +193,9 @@ public class ApiClient {
                         ZjtUserEntity user = new ZjtUserEntity();
                         user.setUid(info.getString("uid"));
                         user.setToken(info.getString("userToken"));
-                        if (null != callback)
+                        if (null != callback) {
                             callback.response(user);
+                        }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
@@ -201,8 +206,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception) {
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -231,8 +237,9 @@ public class ApiClient {
                         ZjtUserEntity user = new ZjtUserEntity();
                         user.setUid(info.getString("uid"));
                         user.setToken(info.getString("userToken"));
-                        if (null != callback)
+                        if (null != callback) {
                             callback.response(user);
+                        }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
@@ -243,8 +250,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception) {
                     exception.error(new String(bytes));
+                }
             }
         });
 
@@ -274,14 +282,16 @@ public class ApiClient {
                  */
                 Gson gson = new Gson();
                 RegisterEntity entity = gson.fromJson(new String(bytes), RegisterEntity.class);
-                if (null != callback)
+                if (null != callback) {
                     callback.response(entity);
+                }
             }
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception) {
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -393,11 +403,13 @@ public class ApiClient {
                 } while (cursor.moveToNext());
             }
             cursor.close();
-            if (null != callback)
+            if (null != callback) {
                 callback.response(mList);
+            }
         } catch (Exception e) {
-            if (null != e && null != exception)
+            if (null != e && null != exception) {
                 exception.error(e.getMessage() + "");
+            }
         }
     }
 
@@ -421,11 +433,13 @@ public class ApiClient {
                     data.add(result);
                 }
             }
-            if (null != callback)
+            if (null != callback) {
                 callback.response(data);
+            }
         } catch (Exception e) {
-            if (null != exception && null != e && null != e.getMessage())
+            if (null != exception && null != e && null != e.getMessage()) {
                 exception.error(e.getMessage());
+            }
         }
     }
 
@@ -478,11 +492,13 @@ public class ApiClient {
 
             }
             cursor.close();
-            if (null != callback)
+            if (null != callback){
                 callback.response(mlist);
+            }
         } catch (Exception e) {
-            if (null != e && null != exception)
+            if (null != e && null != exception){
                 exception.error(e.getMessage() + "");
+            }
         }
     }
 
@@ -506,15 +522,19 @@ public class ApiClient {
             Roster roster = Roster.getInstanceFor(mXMPPConnection);
             try {
                 roster.createEntry(bareJid, saveName, new String[]{"我的设备"});
-                if (null != callback)
+                if (null != callback){
                     callback.response(true);
+                }
             } catch (Exception e) {
                 if (null != e && null != exception)
+                {
                     exception.equals(e.getMessage());
+                }
             }
         } else {
-            if (null != exception)
+            if (null != exception){
                 exception.equals("连接异常");
+            }
         }
 
     }
@@ -618,8 +638,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception) {
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -664,8 +685,9 @@ public class ApiClient {
                     JSONObject object = new JSONObject(new String(bytes));
                     if (object.getBoolean("status")) {
                         PtjUserEntity entity = new Gson().fromJson(object.getJSONObject("info").toString(), PtjUserEntity.class);
-                        if (null != callBack)
+                        if (null != callBack){
                             callBack.response(entity);
+                        }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
@@ -676,8 +698,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception){
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -710,8 +733,9 @@ public class ApiClient {
                                             WineLibraryEntity.class);
                             mList.add(entity);
                         }
-                        if (null != callBack)
+                        if (null != callBack){
                             callBack.response(mList);
+                        }
                     } else {
                         Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
                     }
@@ -722,8 +746,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception){
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -801,8 +826,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception){
                     exception.error(new String(bytes));
+                }
             }
         });
     }
@@ -853,7 +879,7 @@ public class ApiClient {
                             entity.setSubs(sublist);
                             list.add(entity);
                         }
-                        if (null!=callBack){
+                        if (null != callBack) {
                             callBack.response(list);
                         }
                     }
@@ -864,8 +890,9 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception)
+                if (null != exception){
                     exception.error(new String(bytes));
+                }
             }
         });
     }

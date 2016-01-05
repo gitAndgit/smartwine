@@ -50,4 +50,5 @@
     </string-array>
     <string name="title_activity_shop_index_info">美酒商城</string>
     <string name="title_activity_shop_info">美酒列表</string>
+    <string name="title_activity_shop_detail_info">商品详情</string>
 </resources>

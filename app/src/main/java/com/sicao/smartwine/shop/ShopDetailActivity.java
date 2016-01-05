@@ -1,15 +1,35 @@
 package com.sicao.smartwine.shop;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
+import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 
-public class ShopDetailActivity extends AppCompatActivity {
+/***
+ * 美酒详情页面
+ *
+ * @author techssd
+ * @version 1.0.0
+ */
+public class ShopDetailActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shop_detail);
+        init();
+    }
+
+    @Override
+    public String setTitle() {
+        return getString(R.string.title_activity_shop_detail_info);
+    }
+
+    @Override
+    protected int setView() {
+        return R.layout.activity_shop_detail;
+    }
+
+    private void init() {
+
     }
 }
