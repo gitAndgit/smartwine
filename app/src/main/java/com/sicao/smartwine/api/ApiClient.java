@@ -7,7 +7,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.espressif.iot.esptouch.EsptouchTask;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
@@ -31,7 +30,6 @@ import com.smartline.life.core.LANServiceManager;
 import com.smartline.life.core.NetServiceManager;
 import com.smartline.life.core.XMPPManager;
 import com.smartline.life.device.Device;
-
 import org.apache.http.Header;
 import org.jivesoftware.smack.AbstractConnectionListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -584,11 +582,7 @@ class ApiClient {
                                     .getSystemService(NetServiceManager.NSM_SERVICE);
                             nsm.refreshSearchService();
                             Thread.currentThread();
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            Thread.sleep(1000);
                             if (i == 9 && null != mEsptouchTask) {
                                 mEsptouchTask.interrupt();
                                 return;
