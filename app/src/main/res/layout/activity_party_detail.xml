@@ -11,8 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
+        android:orientation="vertical">
+
         <include layout="@layout/include_comment_bottom_bar_party" />
+
+        <include
+            layout="@layout/bottom_comment_layout"
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -22,10 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/ll_bottom"
         android:layout_alignParentTop="true"
-        android:divider="@null"
         android:background="#FFFFFF"
-        android:listSelector="@null" >
-    </com.sicao.smartwine.widget.P2RefreshListView>
+        android:divider="@null"
+        android:listSelector="@null"></com.sicao.smartwine.widget.P2RefreshListView>
 
     <TextView
         android:id="@+id/tv_net_bade"

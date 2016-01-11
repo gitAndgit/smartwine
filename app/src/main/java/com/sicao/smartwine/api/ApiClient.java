@@ -2,13 +2,11 @@ package com.sicao.smartwine.api;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.espressif.iot.esptouch.EsptouchTask;
@@ -22,7 +20,6 @@ import com.sicao.smartwine.device.entity.RegisterEntity;
 import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.DeviceUtil;
-import com.sicao.smartwine.party.PartyDetailActivity;
 import com.sicao.smartwine.shop.entity.Banner;
 import com.sicao.smartwine.shop.entity.ClassTypeEntity;
 import com.sicao.smartwine.shop.entity.Comment;
@@ -1484,7 +1481,7 @@ public class ApiClient {
                             // 将一级回复加入到回复列表数组
                             list.add(c);
                         }
-                        if (null!=callBack){
+                        if (null != callBack) {
                             callBack.response(list);
                         }
                         return;
@@ -1493,6 +1490,99 @@ public class ApiClient {
                 }
             }
 
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 酒会活动添加评论(一级/二级)
+     *
+     * @param context    上下文对象
+     * @param partyID    活动ID
+     * @param pid        被评论者ID
+     * @param type       回复的文本类型( -1图片，0纯文字，1美酒刊，2话题，3葡萄酒)
+     * @param attach_ids 图片ID组
+     * @param img_paths  图片路径组
+     * @param content    回复内容
+     * @param callBack   执行OK回调对象
+     * @param exception  执行失败回调对象
+     */
+    public static void sendCommentFromPartyDetail(Context context, String partyID, String pid, String type,
+                                                  String attach_ids, String img_paths, String content,
+                                                  final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/newPost?userToken="
+                + UserInfoUtil.getToken(context);
+        RequestParams params = new RequestParams();
+        params.put("topic_id", partyID);
+        params.put("content", content);
+        params.put("attach_ids", attach_ids);// 图片id或者文章id
+        params.put("type", type + "");// -1图片，0纯文字，1美酒刊，2话题，3葡萄酒
+        params.put("img_paths", img_paths);// 七牛云存储图片
+        params.put("pid", pid + "");// 被评论者id
+        httpClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        if (null != callBack) {
+                            callBack.response(true);
+                        }
+                    }
+                    return;
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 删除评论
+     *
+     * @param context   上下文对象
+     * @param commentID 评论ID
+     * @param type      评论类型(帖子/文章)
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void deleteComment(Context context, final String commentID,
+                                     final String type, final ApiCallBack callBack,
+                                     final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/delComment?userToken="
+                + UserInfoUtil.getToken(context) + "&id=" + commentID + "&type="
+                + type;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    Log.i("huahua",new String(bytes));
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        if (null != callBack) {
+                            callBack.response(true);
+                        }
+                        return;
+                    }
+                    return;
+                } catch (Exception e) {
+                }
+            }
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {

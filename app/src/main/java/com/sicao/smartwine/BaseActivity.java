@@ -24,13 +24,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected int mConnectID = -1;
     //当前设备ID
     protected String mDeviceID = "";
-
+    //顶部标题
+    TextView title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         content = (FrameLayout) findViewById(R.id.content);
-        TextView title = (TextView) findViewById(R.id.toolbar_title);
+        title = (TextView) findViewById(R.id.toolbar_title);
         title.setText(setTitle() == null ? getString(R.string.app_name) : setTitle());
         rightIcon = (CircleImageView) findViewById(R.id.view);
         RelativeLayout.LayoutParams rightParams = new RelativeLayout.LayoutParams(55,55);
@@ -94,4 +95,5 @@ public abstract class BaseActivity extends AppCompatActivity {
     public String getDeviceID() {
         return UserInfoUtil.getDeviceID(this);
     }
+
 }

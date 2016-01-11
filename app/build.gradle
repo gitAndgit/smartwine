@@ -44,4 +44,6 @@ dependencies {
     compile files('libs/smack-tcp-4.1.1.jar')
     compile files('libs/universal-image-loader-1.9.4.jar')
     compile files('libs/jsoup-1.7.2.jar')
+    compile files('libs/qiniu-android-sdk-7.0.7.2.jar')
+    compile files('libs/happy-dns-0.2.1.jar')
 }

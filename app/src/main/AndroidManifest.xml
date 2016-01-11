@@ -104,6 +104,16 @@
         <activity
             android:name=".party.PartyDetailActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!-- 图片剪切类 -->
+        <activity
+            android:name="com.sicao.smartwine.widget.CropImage"
+            android:configChanges="orientation|keyboard"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
     </application>
 
 </manifest>
