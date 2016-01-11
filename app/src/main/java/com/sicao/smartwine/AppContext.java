@@ -2,10 +2,13 @@ package com.sicao.smartwine;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -14,9 +17,16 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.sicao.smartwine.libs.DeviceDiscoveryManager;
 import com.sicao.smartwine.libs.DeviceUtil;
+import com.sicao.smartwine.shop.entity.ShareEntity;
+import com.sicao.smartwine.util.StringUtil;
 import com.smartline.life.core.LifeApplication;
 
 import java.util.Random;
+
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.theme.OnekeyShare;
+import cn.sharesdk.onekeyshare.theme.OnekeyShareTheme;
 
 /**
  * Created by techssd on 2015/12/25.
@@ -106,5 +116,50 @@ public class AppContext extends LifeApplication {
             sb.append(base.charAt(number));
         }
         return sb.toString();
+    }
+    /***
+     * 分享
+     *
+     * @param context
+     * @param share
+     */
+    public static void share(final Context context, final ShareEntity share,
+                             PlatformActionListener listener) {
+        String title = share.getTitle();
+        ShareSDK.initSDK(context);
+        OnekeyShare oks = new OnekeyShare();
+        oks.setTheme(OnekeyShareTheme.CLASSIC);
+        oks.setDialogMode();
+        // 在自动授权时可以禁用SSO方式
+        oks.disableSSOWhenAuthorize();
+        // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
+        oks.setTitle(title);
+        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
+        oks.setTitleUrl(share.getUrl());
+        oks.setImageUrl(share.getCover());
+        // text是分享文本，所有平台都需要这个字段
+        oks.setText(share.getContent() + share.getUrl());
+        // url仅在微信（包括好友和朋友圈）中使用
+        oks.setUrl(share.getUrl());
+        // site是分享此内容的网站名称，仅在QQ空间使用
+        oks.setSite(share.getUrl());
+        // siteUrl是分享此内容的网站地址，仅在QQ空间使用
+        oks.setSiteUrl(share.getUrl());
+        // 启动分享GUI
+        oks.show(context);
+        oks.setCustomerLogo(BitmapFactory.decodeResource(
+                        context.getResources(), R.drawable.oks_copy_http),
+                BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.oks_copy_http), "复制链接",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StringUtil.copyToClipBoard(context, share.getUrl());
+                        Toast.makeText(instance, "已将内容复制到粘贴板", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        if (null != listener) {
+            oks.setCallback(listener);
+        }
     }
 }

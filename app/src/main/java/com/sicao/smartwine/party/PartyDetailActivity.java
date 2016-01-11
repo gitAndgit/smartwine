@@ -906,6 +906,10 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.address:// 地图
                 break;
+            case R.id.ll_share:// 分享按钮
+                AppContext.share(PartyDetailActivity.this,
+                        topicDetail.getShare(), null);
+                break;
         }
     }
 
