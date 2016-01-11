@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/rr_jiondetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#FFFFFF"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp" >
+
+        <ImageView
+            android:id="@+id/iv_mycellarimage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher" />
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/right_icon" />
+
+        <LinearLayout
+            android:id="@+id/ll_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/iv_mycellarimage"
+            android:layout_toLeftOf="@id/img"
+            android:layout_toRightOf="@id/iv_mycellarimage"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_mywinename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:text="辨识度不高好吧 不上高地啊更不乐观的" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/ll_name"
+            android:layout_below="@id/ll_name"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="￥ 445元"
+            android:textColor="@color/baseColor" />
+    </RelativeLayout>
+
+    <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="15px"
+        android:background="@color/C7C7C7"
+        />
+
+</LinearLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">新朝智能酒柜</string>
+    <string name="app_name">智能酒柜</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_register">注册</string>
     <string name="p2refresh_head_load_more">加载更多</string>
@@ -51,4 +51,6 @@
     <string name="title_activity_shop_index_info">美酒商城</string>
     <string name="title_activity_shop_info">美酒列表</string>
     <string name="title_activity_shop_detail_info">商品详情</string>
+    <string name="title_activity_party_list_info">品酒活动</string>
+    <string name="title_activity_party_detail_info">活动详情</string>
 </resources>

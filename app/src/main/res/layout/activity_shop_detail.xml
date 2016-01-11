@@ -3,10 +3,285 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sicao.smartwine.shop.ShopDetailActivity">
+
+    <include
+        android:id="@+id/wine_bottom"
+        layout="@layout/good_wine_buttom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/wine_bottom"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/good_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher"
+                android:visibility="gone" />
+
+            <com.sicao.smartwine.widget.CircularBannerView
+                android:id="@+id/my_banner"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:visibility="gone"></com.sicao.smartwine.widget.CircularBannerView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/C7C7C7" />
+
+            <TextView
+                android:id="@+id/good_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/write"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/good_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/write"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/baseColor"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/good_destail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/write"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <FrameLayout
+                android:id="@+id/jiujiao_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/write">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/hotel_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="0dp"
+                            android:paddingTop="5dp"
+                            android:text="小店名称"
+                            android:textColor="#646464"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/create_order_shop_icon" />
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:paddingLeft="0dp"
+                                android:paddingRight="10dp"
+                                android:text="葡萄集认证"
+                                android:textColor="@color/baseColor"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/hotel_icon"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:src="@drawable/ic_launcher" />
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBaseline="@id/hotel_icon"
+                            android:layout_alignTop="@id/hotel_icon"
+                            android:layout_toRightOf="@id/hotel_icon"
+                            android:textColor="#646464"
+                            android:text="载酒堂"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/textView3"
+                            android:layout_marginTop="5dp"
+                            android:layout_toRightOf="@id/hotel_icon"
+                            android:src="@drawable/star" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <include layout="@layout/our_promise_framlayout" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="#FFFFFF"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/twjs"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="图文介绍"
+                        android:textColor="@color/baseColor"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/line1"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/baseColor" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/C7C7C7" />
+
+                <LinearLayout
+                    android:id="@+id/jkdp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="酒款点评"
+                        android:textColor="@color/baseColor"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/line2"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/baseColor"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/C7C7C7" />
+
+                <LinearLayout
+                    android:id="@+id/yhpl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="用户评论"
+                        android:textColor="@color/baseColor"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/line3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/baseColor"
+                        android:visibility="invisible" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <WebView
+                android:id="@+id/web_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <WebView
+                android:id="@+id/web_view2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.sicao.smartwine.widget.NoScrollListView
+                android:id="@+id/lv_used_wine_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF"
+                android:listSelector="@null"></com.sicao.smartwine.widget.NoScrollListView>
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

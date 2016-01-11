@@ -57,7 +57,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         init();
         //隐藏返回键
-        toolbar.setNavigationIcon(null);
+        leftIcon.setVisibility(View.GONE);
         if (UserInfoUtil.getLogin(this)) {
             finish();
             startActivity(new Intent(LoginActivity.this, DeviceInfoActivity.class));

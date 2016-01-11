@@ -37,11 +37,10 @@
                 android:src="@drawable/talent_wine_list_icon_up" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="1dp"
+        <ImageView
+            android:layout_width="1px"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/line_1dp" />
+            android:src="@drawable/line_v" />
 
         <LinearLayout
             android:id="@+id/ll_ocasion"
@@ -70,11 +69,10 @@
                 android:src="@drawable/talent_wine_list_icon_up" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="1dp"
+        <ImageView
+            android:layout_width="1px"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/line_1dp" />
+            android:src="@drawable/line_v" />
 
         <LinearLayout
             android:id="@+id/ll_price"
@@ -104,10 +102,10 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/line_1dp" />
+        android:src="@drawable/line" />
 
     <com.sicao.smartwine.widget.NoScrollGridView
         android:id="@+id/gd_item"

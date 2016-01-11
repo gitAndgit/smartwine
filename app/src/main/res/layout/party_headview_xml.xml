@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/new_topic_head_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="6dp"
+        android:visibility="visible">
+
+        <com.sicao.smartwine.widget.CircleImageView xmlns:circle="http://schemas.android.com/apk/res/com.sicao.smartwine"
+            android:id="@+id/iv_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_launcher"
+            circle:border_color="@color/photo_border_color"
+            circle:border_width="@dimen/photo_border_width" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@id/iv_photo"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/add_focus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/add_focus"
+            android:gravity="center_horizontal"
+            android:text="+关注"
+            android:textColor="#000000" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_topic_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#F9F6F7"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DAD8D9"
+            android:clickable="true"
+            android:drawableLeft="@drawable/address_gay"
+            android:drawablePadding="10dp"
+            android:drawableRight="@drawable/rihgt"
+            android:gravity="center_vertical"
+            android:onClick="onClick"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp"
+            android:paddingTop="5dp"
+            android:text="深圳新朝酒窖体验馆"
+            android:textColor="#323232" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/time_gay"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp"
+            android:paddingTop="4dp"
+            android:text="周二 10/28 下午14:00"
+            android:textColor="#646464" />
+
+        <TextView
+            android:id="@+id/person"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/person_gay"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp"
+            android:paddingTop="4dp"
+            android:text="20人"
+            android:textColor="#646464" />
+
+        <TextView
+            android:id="@+id/money"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/money_gay"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp"
+            android:paddingTop="4dp"
+            android:text="活动费用50元"
+            android:textColor="#646464" />
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/tv_feeldrink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_appcolor"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:onClick="onClick"
+        android:text="申请试饮"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="美酒链接"
+        android:textColor="@color/baseColor"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/ls_mjk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/base_edit_input"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/is_mjk"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/ts_mjk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:padding="10dp"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/ll_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp">
+
+            <ImageView
+                android:id="@+id/iv_comment"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/tv_selector"
+                android:padding="6dp"
+                android:src="@drawable/ic_comment_p" />
+
+            <TextView
+                android:id="@+id/tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:background="@color/photo_border_color" />
+
+        <LinearLayout
+            android:id="@+id/ll_support"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/ll_comment"
+            android:layout_toStartOf="@id/ll_comment"
+            android:clickable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp">
+
+            <ImageView
+                android:id="@+id/iv_support"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_support_n" />
+
+            <TextView
+                android:id="@+id/tv_support"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_jion_drive"
+        android:layout_width="match_parent"
+        android:layout_height="20px"
+        android:background="@color/baseBackgroud"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/party_person_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:text="报名成员" />
+
+        <TextView
+            android:id="@+id/party_person"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:drawablePadding="10dp"
+            android:drawableRight="@drawable/rihgt"
+            android:text="20人" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/tv_hanyonghzong"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:src="@drawable/line" />
+
+    <com.sicao.smartwine.widget.NoScrollGridView
+        android:id="@+id/GridView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:background="#FFFFFF"
+        android:horizontalSpacing="3dp"
+        android:numColumns="9"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:verticalSpacing="3dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_wine_drive"
+        android:layout_width="match_parent"
+        android:layout_height="20px"
+        android:background="@color/baseColor"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/party_wine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#FFFFFF"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:text="活动酒款" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_activitywines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#FFFFFF"
+        android:orientation="vertical"></LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="用户评论" />
+
+</LinearLayout>

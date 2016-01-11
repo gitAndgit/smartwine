@@ -61,7 +61,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConnectID = getIntent().getExtras().getInt("connectid");
-        toolbar.setNavigationIcon(null);
+        leftIcon.setVisibility(View.GONE);
         SSID = (TextView) findViewById(R.id.editText1);
         password = (EditText) findViewById(R.id.editText2);
         prePage = (TextView) findViewById(R.id.textView9);

@@ -2,41 +2,48 @@ package com.sicao.smartwine;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sicao.smartwine.util.UserInfoUtil;
 import com.sicao.smartwine.widget.CircleImageView;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    //顶部标题栏
-    protected Toolbar toolbar;
     //内容容器参数配置
     protected FrameLayout.LayoutParams params;
     //内容容器
     protected FrameLayout content;
     //Toolbar右侧图标
-    protected  CircleImageView rightIcon;
+    protected CircleImageView rightIcon;
+    //Toolbar左侧图标
+    protected ImageView leftIcon;
     //当前连接ID
     protected int mConnectID = -1;
     //当前设备ID
     protected String mDeviceID = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         content = (FrameLayout) findViewById(R.id.content);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
         TextView title = (TextView) findViewById(R.id.toolbar_title);
         title.setText(setTitle() == null ? getString(R.string.app_name) : setTitle());
         rightIcon = (CircleImageView) findViewById(R.id.view);
-        setSupportActionBar(toolbar);
+        RelativeLayout.LayoutParams rightParams = new RelativeLayout.LayoutParams(55,55);
+        rightParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        rightParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+        rightParams.rightMargin=20;
+        rightParams.leftMargin=10;
+        rightParams.topMargin=10;
+        rightParams.bottomMargin=10;
+        rightIcon.setLayoutParams(rightParams);
+        leftIcon = (ImageView) findViewById(R.id.left_icon);
         //返回键
-        toolbar.setNavigationIcon(R.drawable.ic_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        leftIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBack();

@@ -12,47 +12,42 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:background="@color/baseColor"
+            android:layout_height="?attr/actionBarSize">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/baseColor"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
+            <ImageView
+                android:id="@+id/left_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="20dp"
+                android:src="@drawable/ic_back" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="-10dp"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/toolbar_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginLeft="-10dp"
-                        android:textSize="20sp" />
-
-                    <com.sicao.smartwine.widget.CircleImageView
-                        android:id="@+id/view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="right"
-                        android:layout_margin="15dp"
-                        app:border_color="#FFFFFF"
-                        app:border_width="1dp" />
-                </RelativeLayout>
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.AppBarLayout>
+            <com.sicao.smartwine.widget.CircleImageView
+                android:id="@+id/view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right"
+                android:layout_margin="15dp"
+                app:border_color="#FFFFFF"
+                app:border_width="1dp" />
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/content"

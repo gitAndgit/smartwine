@@ -24,6 +24,7 @@ import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.WineCabinetMetaData;
 import com.sicao.smartwine.libs.WineCabinetService;
+import com.sicao.smartwine.party.PartyListActivity;
 import com.sicao.smartwine.shop.IndexActivity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
@@ -87,7 +88,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        toolbar.setNavigationIcon(null);
+        leftIcon.setVisibility(View.GONE);
         //右侧头像
         rightIcon.setImageResource(R.drawable.ic_back);
         //
@@ -174,6 +175,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             @Override
             public void connectionClosed() {
                 super.connectionClosed();
+
 
             }
 
@@ -338,11 +340,26 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         int id = view.getId();
         switch (id) {
             case R.id.textView13://酒柜设置
-                if (mConnectID != -1 && !"".equals(mDeviceID))
-                    startActivityForResult(new Intent(this, SmartSetActivity.class).putExtra("smartWineName", mDevice.getName()).
-                            putExtra("smartWineMode", entity == null || "".equals(entity.getWork_model_name()) ? "手动模式" : entity.getWork_model_name()).
-                            putExtra("smartModeTemp", entity == null || "".equals(entity.getWork_model_demp()) ?
-                                    "12" : entity.getWork_model_demp()), 10088);
+                if (mConnectID != -1 && !"".equals(mDeviceID)) {
+                    String smartWineMode = "";
+                    String smartModeTemp = "";
+                    if (null == entity) {
+                        smartWineMode = "";
+                        smartModeTemp = "";
+                    } else {
+                        if (null == entity.getWork_model_name()) {
+                            smartWineMode = "";
+                            smartModeTemp = "";
+                        } else {
+                            smartWineMode = entity.getWork_model_name();
+                            smartModeTemp = entity.getWork_model_demp();
+                        }
+                    }
+                    startActivityForResult(new Intent(this, SmartSetActivity.class).
+                            putExtra("smartWineName", mDevice.getName()).
+                            putExtra("smartWineMode", smartWineMode).
+                            putExtra("smartModeTemp", smartModeTemp), 10088);
+                }
                 break;
             case R.id.imageView3://酒柜灯开关
                 if (mConnectID != -1 && !"".equals(mDeviceID)) {
@@ -367,7 +384,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 startActivity(new Intent(this, IndexActivity.class));
                 break;
             case R.id.drinkWine://品酒行动
-                Toast.makeText(DeviceInfoActivity.this, "品酒行动", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, PartyListActivity.class));
                 break;
             case R.id.tiXing://美酒提醒
                 Toast.makeText(DeviceInfoActivity.this, "美酒提醒", Toast.LENGTH_SHORT).show();
@@ -435,10 +452,9 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 });
             }
         } else if (resultCode == RESULT_CANCELED) {//设备重置
-            if (null!=data&&null!=data.getExtras()&&data.getExtras().containsKey("reset_device"))
-            {
+            if (null != data && null != data.getExtras() && data.getExtras().containsKey("reset_device")) {
                 // 没有设备
-                mDeviceID="";
+                mDeviceID = "";
                 setDeviceID("");
                 mIsonline.setText("未连接");
                 wineLight.setImageResource(R.drawable.light_icon_close);

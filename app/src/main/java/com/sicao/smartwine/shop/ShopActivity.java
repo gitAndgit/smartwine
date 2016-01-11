@@ -1,10 +1,12 @@
 package com.sicao.smartwine.shop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.api.ApiClient;
@@ -158,11 +160,11 @@ public class ShopActivity extends BaseActivity {
                     class2_2.setImageResource(R.drawable.talent_wine_list_icon_up);
                     class3_3.setImageResource(R.drawable.talent_wine_list_icon_up);
                 }
-//                Intent intent = new Intent(ShopActivity.this,
-//                        WineUsedDetailsActivity.class);
-//                intent.putExtra("windid", entity.getId());
-//                intent.putExtra("url", entity.getBuy_address());
-//                startActivity(intent);
+                Intent intent = new Intent(ShopActivity.this,
+                        ShopDetailActivity.class);
+                intent.putExtra("windid", entity.getId());
+                intent.putExtra("url", entity.getBuy_address());
+                startActivity(intent);
             }
         });
         lv_wine_library.setOnLoadListener(new OnLoadMoreListener() {

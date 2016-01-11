@@ -95,7 +95,15 @@
         <activity
             android:name=".shop.ShopActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".shop.ShopDetailActivity"></activity>
+        <activity
+            android:name=".shop.ShopDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".party.PartyListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".party.PartyDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

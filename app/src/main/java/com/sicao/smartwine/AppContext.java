@@ -2,6 +2,8 @@ package com.sicao.smartwine;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -18,7 +20,7 @@ import com.smartline.life.core.LifeApplication;
  * Created by techssd on 2015/12/25.
  */
 public class AppContext extends LifeApplication {
-
+    private static AppContext  instance;
     // 酒柜部分
     private DeviceDiscoveryManager manager;
     //图片加载库
@@ -32,6 +34,7 @@ public class AppContext extends LifeApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance=this;
         // 初始化屏幕参数
         mManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         metrics = new DisplayMetrics();
@@ -72,4 +75,22 @@ public class AppContext extends LifeApplication {
             .bitmapConfig(Bitmap.Config.RGB_565)
             .showImageOnFail(R.drawable.ic_launcher)
             .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+
+    /**
+     * 判断网络是否可用
+     *
+     * @return
+     */
+    public static boolean isNetworkAvailable() {
+        NetworkInfo info = getNetworkInfo();
+        if (info != null) {
+            return info.isAvailable();
+        }
+        return false;
+    }
+
+    private static NetworkInfo getNetworkInfo() {
+        ConnectivityManager cm = (ConnectivityManager)instance.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo();
+    }
 }
