@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,6 +21,8 @@ import com.sicao.smartwine.device.entity.RegisterEntity;
 import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.DeviceUtil;
+import com.sicao.smartwine.pay.Constants;
+import com.sicao.smartwine.pay.OrderEntity;
 import com.sicao.smartwine.shop.entity.Banner;
 import com.sicao.smartwine.shop.entity.ClassTypeEntity;
 import com.sicao.smartwine.shop.entity.Comment;
@@ -33,6 +36,7 @@ import com.sicao.smartwine.shop.entity.TopicDetail;
 import com.sicao.smartwine.shop.entity.User;
 import com.sicao.smartwine.shop.entity.WineEntity;
 import com.sicao.smartwine.shop.entity.WineLibraryEntity;
+import com.sicao.smartwine.user.entity.Address;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListAndObjectCallBack;
@@ -45,6 +49,7 @@ import com.smartline.life.core.XMPPManager;
 import com.smartline.life.device.Device;
 
 import org.apache.http.Header;
+import org.apache.http.protocol.HTTP;
 import org.jivesoftware.smack.AbstractConnectionListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
@@ -1571,7 +1576,7 @@ public class ApiClient {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
                 try {
-                    Log.i("huahua",new String(bytes));
+                    Log.i("huahua", new String(bytes));
                     JSONObject object = new JSONObject(new String(bytes));
                     if (status(object)) {
                         if (null != callBack) {
@@ -1583,6 +1588,127 @@ public class ApiClient {
                 } catch (Exception e) {
                 }
             }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 获取订单详情
+     *
+     * @param context   上下文对象
+     * @param orderID   订单ID
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void getOrderDetail(Context context, String orderID,
+                                      final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getMyOrderDetail?userToken="
+                + UserInfoUtil.getToken(context) + "&order_id=" + orderID;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        JSONObject info = object.getJSONObject("info");
+                        // 订单
+                        OrderEntity entity = new OrderEntity();
+                        entity.setOrderId(info.getString("id"));// 订单id
+                        entity.setOrderNumber(info.getString("order_sn"));// 订单号
+                        entity.setOrderPrice(info.getString("total_price"));// 订单价格
+                        entity.setState(info.getString("current_status"));// 订单状态
+                        // 商品信息
+                        WineEntity wine = new WineEntity();
+                        wine.setWineName(info.getString("name"));
+                        wine.setPrice(info.getString("unit_price"));
+                        wine.setOldPrice(info.getString("origin_price"));
+                        wine.setWineImg(info.getString("icon"));
+                        wine.setDetail(info.getString("description"));
+                        // 规格信息
+                        WineEntity meal = new WineEntity();
+                        meal.setWineName(info.getString("specify_name") + "");
+                        // 收货人地址栏信息
+                        Address address = new Address();
+                        address.setAddress(info.getString("address"));
+                        address.setName(info.getString("consignee"));
+                        address.setPhone(info.getString("mobile"));
+                        // 1，设置地址信息
+                        entity.setAddress(address);
+                        // 2，设置商品信息
+                        entity.setGoods(wine);
+                        // 3，设置规格信息
+                        entity.setMeal(meal);
+                        // 4，底部显示要支付的金额
+                    } else {
+                        if (null != exception) {
+                            exception.error(object.getString("info") + "");
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 支付前对订单进行校验
+     *
+     * @param context   上下文对象
+     * @param orderID   订单ID
+     * @param sign      待校验的字符串
+     * @param payType   支付类型(支付宝/微信)
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void checkSign(Context context, String orderID, String sign, final String payType,
+                                 final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/verfityAndReturnOrderId?userToken="
+                + UserInfoUtil.getToken(context) + "&order_id=" + orderID
+                + "&order_key=" + sign + "&pay_type=" + payType;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        JSONObject info = object.getJSONObject("info");
+                        // 赋值支付回调web的url
+                        OrderEntity entity = new OrderEntity();
+                        entity.setNotifyurl(info.getString("notify_url"));
+                        entity.setState(payType);
+                        if ("2".equals(payType)) {
+                            // 如果是调用微信，则获取微信预支付订单号
+                            entity.setOrderNumber(info.getString("prepay_id"));
+                        }
+                        if (null != callBack) {
+                            callBack.response(entity);
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {

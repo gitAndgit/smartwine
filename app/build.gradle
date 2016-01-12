@@ -48,4 +48,6 @@ dependencies {
     compile files('libs/happy-dns-0.2.1.jar')
     compile files('libs/MobCommons.jar')
     compile files('libs/ShareSDK-Core-2.6.6.jar')
+    compile files('libs/alipaysdk.jar')
+    compile files('libs/libammsdk.jar')
 }

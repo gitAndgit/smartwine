@@ -1,5 +1,6 @@
 package com.sicao.smartwine;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import com.sicao.smartwine.shop.entity.ShareEntity;
 import com.sicao.smartwine.util.StringUtil;
 import com.smartline.life.core.LifeApplication;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import cn.sharesdk.framework.PlatformActionListener;
@@ -42,7 +44,8 @@ public class AppContext extends LifeApplication {
     private WindowManager mManager = null;
     /** 屏幕数据 **/
     public static DisplayMetrics metrics = null;
-
+    // 下订单支付流程页面记录、
+    public static ArrayList<Activity> pay = new ArrayList<Activity>();
     @Override
     public void onCreate() {
         super.onCreate();

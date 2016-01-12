@@ -956,6 +956,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     isSending = false;
                 }
             });
+
         }
     }
 
