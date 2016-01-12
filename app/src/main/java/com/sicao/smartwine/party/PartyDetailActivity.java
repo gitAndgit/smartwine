@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,6 +159,8 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
     String imgId = "";// 图片Id、文章id
     // 待上传的图片路径
     String mImagePath = "";
+    //每次评论后listview滚动的位置
+    int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -448,7 +449,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                                     .setBackgroundResource(R.drawable.shape_appcolor);
                             free_drink_btn.setText("该活动已结束");
                             free_drink_btn.setTextColor(getResources()
-                                    .getColor(R.color.baseColor));
+                                    .getColor(R.color.write));
                             free_drink_btn.setClickable(false);
                             return;
                         }
@@ -535,18 +536,18 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                         public void onClick(String value) {
                             if ("删除评论".equals(value)) {
                                 String id = comment.getId();
-                                deleteComment(id, true);// 删除该评论
-
+                                deleteComment(id, true, index);// 删除该评论
                             }
                             removeWindow.dismiss();
+
                         }
                     });
                     return;
                 }
                 isCommentShown = true;
-                // 二层回复类型 0，纯文本
+                // 一层回复类型 0，纯文本
                 type = 0;
-                // 二层回复的上层回复id
+                // 一层回复的上层回复id
                 pid = Integer.parseInt(comment.getId());
                 showSoftInputView();
                 btn_more.setVisibility(View.GONE);
@@ -557,12 +558,13 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                 ll_comment_bar.setVisibility(View.VISIBLE);
                 ll_bottom2.setVisibility(View.GONE);
                 et_content.setHint("回复:" + comment.getUser().getNickname());
+                position = index;//标记要滚动的位置
             }
         });
         // 二层回复点击事件
         adapter.setChildItemChildClickListener(new SnsCommentAdapter.CommentItemChildClickListener() {
             @Override
-            public void onClick(int index, final CommentList comment) {
+            public void onClick(final int index, final CommentList comment) {
                 if (comment.getUida().equals(
                         UserInfoUtil.getUID(PartyDetailActivity.this))) {
                     // 二层回复删除事件
@@ -575,14 +577,13 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                         public void onClick(String value) {
                             if ("删除评论".equals(value)) {
                                 int id = comment.getCommentListid();
-                                deleteComment(id + "", false);// 删除该评论
+                                deleteComment(id + "", false, index);// 删除该评论
                             }
                             removeWindow.dismiss();
                         }
                     });
                     return;
                 }
-                Log.i("huahua", "卧槽");
                 isCommentShown = true;
                 // 二层回复类型 0，纯文本
                 type = 0;
@@ -597,6 +598,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                 ll_comment_bar.setVisibility(View.VISIBLE);
                 ll_bottom2.setVisibility(View.GONE);
                 et_content.setHint("回复:" + comment.getUnamea());
+                position = index;//标记要滚动的位置
             }
         });
 
@@ -934,14 +936,22 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     ll_add.setVisibility(View.GONE);
                     layout_emo.setVisibility(View.GONE);
                     layout_more.setVisibility(View.GONE);
-                    //刷新评论，并滚动到当前的位置
-                    page = 1;
-                    getCommentList(partyID, page, 10);
-                    lv_comment.setSelection(position);
+                    //若为一级回复，则将listview滚动到最新的一层楼上面
+                    if (pid == 0) {
+                        lv_comment.requestFocusFromTouch();
+                        lv_comment.setSelection(lv_comment.getHeaderViewsCount());
+                    } else {
+                        //二级回复
+                        lv_comment.requestFocusFromTouch();
+                        lv_comment.setSelection(position);
+                    }
                     //评论数增加
                     int count = Integer.parseInt(tv_commentnew.getText().toString().trim());
                     count++;
                     tv_commentnew.setText(count + "");
+                    //刷新评论，并滚动到当前的位置
+                    page = 1;
+                    getCommentList(partyID, page, 10);
                 }
             }, new ApiException() {
                 @Override
@@ -1147,10 +1157,11 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
     /***
      * 删除评论
      *
-     * @param id    评论ID
-     * @param isOne 是否是一层回复
+     * @param id       评论ID
+     * @param isOne    是否是一层回复
+     * @param position 当用户删除了自己的评论以后，listview要滚动的位置，不能是当前删除的位置，只取删除位置的前一个位置，注意0位置异常
      */
-    public void deleteComment(String id, final boolean isOne) {
+    public void deleteComment(String id, final boolean isOne, final int position) {
         ApiClient.deleteComment(this, id, "1", new ApiCallBack() {
             @Override
             public void response(Object object) {
@@ -1159,6 +1170,17 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     int count = Integer.parseInt(tv_commentnew.getText().toString().trim());
                     count--;
                     tv_commentnew.setText(count + "");
+                    if (position - 1 != 0) {
+                        if (position-1!=lv_comment.getHeaderViewsCount()){
+                            //删除的不是第一条回复
+                            lv_comment.requestFocusFromTouch();
+                            lv_comment.setSelection(position - 1);
+                        }else{
+                            //如果删除的是第一条回复，则将listview滚动到headview的底部，就是最新的一条回复上面
+                            lv_comment.requestFocusFromTouch();
+                            lv_comment.setSelection(lv_comment.getHeaderViewsCount());
+                        }
+                    }
                 }
                 page = 1;
                 getCommentList(partyID, page, 10);
