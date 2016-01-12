@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -940,10 +941,6 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     if (pid == 0) {
                         lv_comment.requestFocusFromTouch();
                         lv_comment.setSelection(lv_comment.getHeaderViewsCount());
-                    } else {
-                        //二级回复
-                        lv_comment.requestFocusFromTouch();
-                        lv_comment.setSelection(position);
                     }
                     //评论数增加
                     int count = Integer.parseInt(tv_commentnew.getText().toString().trim());
@@ -1170,16 +1167,15 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     int count = Integer.parseInt(tv_commentnew.getText().toString().trim());
                     count--;
                     tv_commentnew.setText(count + "");
-                    if (position - 1 != 0) {
-                        if (position-1!=lv_comment.getHeaderViewsCount()){
-                            //删除的不是第一条回复
-                            lv_comment.requestFocusFromTouch();
-                            lv_comment.setSelection(position - 1);
-                        }else{
-                            //如果删除的是第一条回复，则将listview滚动到headview的底部，就是最新的一条回复上面
-                            lv_comment.requestFocusFromTouch();
-                            lv_comment.setSelection(lv_comment.getHeaderViewsCount());
-                        }
+                    Log.i("huahua", "position=" + position + ";headcount=" + lv_comment.getHeaderViewsCount());
+                    if (position != 0) {
+                        //删除的不是第一条回复
+                        lv_comment.requestFocusFromTouch();
+                        lv_comment.setSelection(position - 1 + lv_comment.getHeaderViewsCount());
+                    } else {
+                        //如果删除的是第一条回复，则将listview滚动到headview的底部，就是最新的一条回复上面
+                        lv_comment.requestFocusFromTouch();
+                        lv_comment.setSelection(lv_comment.getHeaderViewsCount());
                     }
                 }
                 page = 1;
