@@ -1,16 +1,10 @@
 package com.sicao.smartwine.api;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.espressif.iot.esptouch.EsptouchTask;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -19,9 +13,6 @@ import com.sicao.smartwine.device.entity.ModelEntity;
 import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.device.entity.RegisterEntity;
 import com.sicao.smartwine.device.entity.ZjtUserEntity;
-import com.sicao.smartwine.libs.DeviceMetaData;
-import com.sicao.smartwine.libs.DeviceUtil;
-import com.sicao.smartwine.pay.Constants;
 import com.sicao.smartwine.pay.OrderEntity;
 import com.sicao.smartwine.shop.entity.Banner;
 import com.sicao.smartwine.shop.entity.ClassTypeEntity;
@@ -43,25 +34,13 @@ import com.sicao.smartwine.util.ApiListAndObjectCallBack;
 import com.sicao.smartwine.util.ApiListCallBack;
 import com.sicao.smartwine.util.MD5;
 import com.sicao.smartwine.util.UserInfoUtil;
-import com.smartline.life.core.LANServiceManager;
-import com.smartline.life.core.NetServiceManager;
-import com.smartline.life.core.XMPPManager;
-import com.smartline.life.device.Device;
 
 import org.apache.http.Header;
-import org.apache.http.protocol.HTTP;
-import org.jivesoftware.smack.AbstractConnectionListener;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jxmpp.util.XmppStringUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 用于执行网络请求部分
@@ -307,7 +286,6 @@ public class ApiClient {
                 }
                 return;
             }
-
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {
@@ -317,303 +295,6 @@ public class ApiClient {
             }
         });
     }
-
-    /***
-     * 登录接口(智捷通),执行OK返回设备连接ID(ConnectID)(智捷通)
-     *
-     * @param context   上下文对象
-     * @param host      登录IP地址(112.124.50.143)
-     * @param port      登录IP端口(5222)
-     * @param service   接口服务名(life.com)
-     * @param resource  登录账号类型(mobile)
-     * @param username  用户名(sicao-123456789)
-     * @param password  密码
-     * @param callBack  接口执行OK回调
-     * @param exception 接口执行失败回调
-     */
-    public static void login(final Context context, final String host, final int port, final String service,
-                             final String resource, final String username, final String password,
-                             final ApiCallBack callBack, final ApiException exception) {
-        new Thread() {
-            @Override
-            public void run() {
-                XMPPManager xmppManager = (XMPPManager) context
-                        .getApplicationContext().getSystemService(
-                                XMPPManager.XMPP_SERVICE);
-                XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration
-                        .builder();
-                builder.setHost(host);
-                builder.setPort(port);
-                builder.setServiceName(service);
-                builder.setResource(resource);
-                builder.setSendPresence(true);
-                builder.setUsernameAndPassword(username, password);
-                builder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
-                final int connId = xmppManager.addXMPPTCPConnection(builder
-                        .build());
-                xmppManager.connection(connId,
-                        new AbstractConnectionListener() {
-                            @Override
-                            public void authenticated(
-                                    XMPPConnection connection, boolean resumed) {
-                                if (null != callBack) {
-                                    callBack.response(connId);
-                                }
-                                return;
-                            }
-
-                            @Override
-                            public void connectionClosedOnError(Exception e) {
-                                if (null != exception && null != e
-                                        && null != e.getMessage()) {
-                                    exception.error(e.getMessage());
-                                }
-                                return;
-                            }
-                        });
-            }
-        }.start();
-    }
-
-    /***
-     * 获取所有的设备列表信息(智捷通)
-     *
-     * @param context   上下文对象
-     * @param callback  接口执行OK回调
-     * @param exception 接口执行失败回调
-     */
-    public static void getDeviceList(final Context context,
-                                     final ApiListCallBack callback, final ApiException exception) {
-        try {
-            ContentResolver mResolver = context.getApplicationContext()
-                    .getContentResolver();
-            Cursor cursor = mResolver.query(DeviceMetaData.CONTENT_URI, null,
-                    null, null, null);
-            ArrayList<Device> mList = new ArrayList<Device>();
-            if (null != cursor && cursor.moveToFirst()) {
-                do {
-                    Device device = new Device();
-                    // 数据库ID字段
-                    device.setId(Integer.parseInt(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData._ID))));
-                    // 设备id
-                    device.setJid(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.JID)));
-                    // 设备分组
-                    device.setGroup(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.GROUP)));
-                    // 设备MAC地址
-                    device.setMac(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.MAC)));
-                    //
-                    device.setManufacturer(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.MAN)));
-                    // 设备模式
-                    device.setModel(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.MODEL)));
-                    // 设备的名称
-                    device.setName(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.NAME)));
-                    // 设备是否在线
-                    device.setOnline("1".equals(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.ONLINE))) ? true
-                            : false);
-                    device.setWifiSSID(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.SSID)));
-                    // 设备系统---电板
-                    device.setOs(cursor.getString(cursor
-                            .getColumnIndex(DeviceMetaData.OS)));
-                    mList.add(device);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-            if (null != callback) {
-                callback.response(mList);
-            }
-            return;
-        } catch (Exception e) {
-            if (null != e && null != exception) {
-                exception.error(e.getMessage() + "");
-            }
-            return;
-        }
-    }
-
-    /***
-     * 获取WIFI列表数据(智捷通)
-     *
-     * @param context   上下文对象
-     * @param callback  执行OK时回调对象
-     * @param exception 执行失败时回调对象
-     */
-    public static void getWifiList(final Context context,
-                                   final ApiListCallBack callback, final ApiException exception) {
-        try {
-            WifiManager manager = (WifiManager) context.getApplicationContext()
-                    .getSystemService(Context.WIFI_SERVICE);
-            manager.startScan();
-            List<ScanResult> results = manager.getScanResults();
-            ArrayList<ScanResult> data = new ArrayList<ScanResult>();
-            for (ScanResult result : results) {
-                if (!DeviceUtil.isNewDevice(result.SSID) && !"".equals(result.SSID)) {
-                    data.add(result);
-                }
-            }
-            if (null != callback) {
-                callback.response(data);
-            }
-            return;
-        } catch (Exception e) {
-            if (null != exception && null != e && null != e.getMessage()) {
-                exception.error(e.getMessage());
-            }
-            return;
-        }
-    }
-
-    /**
-     * 获取发现设备列表数据(智捷通)
-     *
-     * @param context   上下文对象
-     * @param callback  执行OK回调对象
-     * @param exception 执行失败回调对象
-     */
-    public static void getNativeConfigDeviceList(final Context context,
-                                                 final ApiListCallBack callback, final ApiException exception) {
-        try {
-            ContentResolver mResolver = context.getApplicationContext()
-                    .getContentResolver();
-            //
-            Cursor cursor = mResolver.query(DeviceMetaData.FIND_CONTENT_URI,
-                    null, null, null, null);
-            ArrayList<Device> mlist = new ArrayList<Device>();
-            if (null != cursor && cursor.moveToFirst()) {
-
-                do {
-
-                    // 该状态表示该设备在网络服务器上已经配置完毕，但是还没有添加到我的设备列表里面
-                    if (!DeviceMetaData.Status.WAN.equals(cursor
-                            .getString(cursor
-                                    .getColumnIndex(DeviceMetaData.STATUS)))) {
-                        Device device = new Device();
-                        // 数据库ID字段
-                        int id = Integer.parseInt(cursor.getString(cursor
-                                .getColumnIndex(DeviceMetaData._ID)));
-                        device.setId(id);
-                        // 设备id
-                        String jid = cursor.getString(cursor
-                                .getColumnIndex(DeviceMetaData.JID));
-                        device.setJid(jid);
-                        // 设备MAC地址
-                        String mac = cursor.getString(cursor
-                                .getColumnIndex(DeviceMetaData.MAC));
-                        device.setMac(mac);
-                        // 设备模式
-                        String model = cursor.getString(cursor
-                                .getColumnIndex(DeviceMetaData.MODEL));
-                        device.setModel(model);
-                        // 设备的名称
-                        String name = cursor.getString(cursor
-                                .getColumnIndex(DeviceMetaData.NAME));
-                        device.setName(name);
-                        mlist.add(device);
-                    }
-
-                } while (cursor.moveToNext());
-
-            }
-            cursor.close();
-            if (null != callback) {
-                callback.response(mlist);
-            }
-            return;
-        } catch (Exception e) {
-            if (null != e && null != exception) {
-                exception.error(e.getMessage() + "");
-            }
-            return;
-        }
-    }
-
-    /**
-     * 将刚配置好的设备添加到我的设备列表里面(智捷通)
-     *
-     * @param context   上下文对象
-     * @param connectid XMPPConnection连接对象id
-     * @param device    设备对象
-     */
-    public static void addDevice(final Context context, final int connectid,
-                                 final Device device, final String saveName,
-                                 final ApiCallBack callback, final ApiException exception) {
-        XMPPManager mXMPPManager = (XMPPManager) context
-                .getApplicationContext().getSystemService(
-                        XMPPManager.XMPP_SERVICE);
-        final XMPPConnection mXMPPConnection = mXMPPManager
-                .getXMPPConnection(connectid);
-        if (mXMPPConnection.isConnected() && mXMPPConnection.isAuthenticated()) {
-            String bareJid = XmppStringUtils.parseBareJid(device.getJid());
-            Roster roster = Roster.getInstanceFor(mXMPPConnection);
-            try {
-                roster.createEntry(bareJid, saveName, new String[]{"我的设备"});
-                if (null != callback) {
-                    callback.response(true);
-                }
-                return;
-            } catch (Exception e) {
-                if (null != e && null != exception) {
-                    exception.equals(e.getMessage());
-                }
-                return;
-            }
-        } else {
-            if (null != exception) {
-                exception.equals("连接异常");
-            }
-            return;
-        }
-
-    }
-
-    /***
-     * 向设备发送UDP数据包(无结果返回)40s(智捷通)
-     *
-     * @param context       上下文对象
-     * @param wifi_ssid     WIFI名称
-     * @param wifi_password WIFI密码
-     */
-    public static void configWIFIToDevice(final Context context,
-                                          final String wifi_ssid, final String wifi_password) {
-        new Thread() {
-            @Override
-            public void run() {
-                EsptouchTask mEsptouchTask = new EsptouchTask(wifi_ssid,
-                        wifi_password, context);
-                try {
-                    if (null != mEsptouchTask) {
-                        mEsptouchTask.execute();
-                        // 执行10秒10次的轮询数据库表
-                        int max = 10;
-                        for (int i = 0; i < max; i++) {
-                            LANServiceManager serviceManager = (LANServiceManager) context
-                                    .getSystemService(LANServiceManager.LAN_SERVICE);
-                            serviceManager.discoveryLanServices();
-                            NetServiceManager nsm = (NetServiceManager) context
-                                    .getSystemService(NetServiceManager.NSM_SERVICE);
-                            nsm.refreshSearchService();
-                            Thread.currentThread();
-                            Thread.sleep(1000);
-                            if (i == 9 && null != mEsptouchTask) {
-                                mEsptouchTask.interrupt();
-                                return;
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                }
-            }
-        }.start();
-    }
-
     /***
      * 配置设备的工作模式(葡萄集)
      *
@@ -713,10 +394,6 @@ public class ApiClient {
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                if (null != exception) {
-                    exception.error(new String(bytes));
-                }
-                return;
             }
         });
     }
@@ -1418,7 +1095,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getPartyDetailComments(Context context, String partyID, int page, int row,
+    public static void getPartyDetailComments(Context context, String partyID, int page, int row,final int maxComment,
                                               final ApiListCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/listPost?userToken="
@@ -1436,6 +1113,7 @@ public class ApiClient {
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject comment = array.getJSONObject(i);
                             Comment c = new Comment();
+                            c.setPost_num(maxComment+"");
                             // 一级回复内容
                             c.setContent(comment.getString("content"));
                             // 一级回复id

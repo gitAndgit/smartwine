@@ -200,7 +200,7 @@ public class SnsCommentAdapter extends BaseAdapter {
 					viewHolder.five.setImageResource(R.drawable.prisent_hava);
 				}
 			} else {
-				viewHolder.tv_time.setText((list.size() - position) + "楼");
+				viewHolder.tv_time.setText((Integer.parseInt(comment.getPost_num()) - position) + "楼");
 				viewHolder.one.setVisibility(View.GONE);
 				viewHolder.two.setVisibility(View.GONE);
 				viewHolder.there.setVisibility(View.GONE);

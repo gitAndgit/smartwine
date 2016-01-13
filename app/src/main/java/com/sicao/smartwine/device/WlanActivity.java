@@ -10,10 +10,8 @@ import android.widget.Toast;
 
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
+import com.sicao.smartwine.api.LifeClient;
 import com.sicao.smartwine.device.adapter.WifiAdapter;
-import com.sicao.smartwine.api.ApiClient;
-import com.sicao.smartwine.util.ApiException;
-import com.sicao.smartwine.util.ApiListCallBack;
 
 import java.util.ArrayList;
 
@@ -53,14 +51,14 @@ public class WlanActivity extends BaseActivity {
             }
         });
         // 获取WIFI列表数据
-        ApiClient.getWifiList(getApplicationContext(), new ApiListCallBack() {
+        LifeClient.getWifiList(getApplicationContext(), new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
             @SuppressWarnings("unchecked")
             @Override
             public <T> void response(ArrayList<T> list) {
                 mList = (ArrayList<ScanResult>) list;
                 mAdapter.update(mList);
             }
-        }, new ApiException() {
+        }, new com.sicao.smartwine.api.LifeClient.ApiException() {
             @Override
             public void error(String error) {
                 Toast.makeText(getApplicationContext(), error + "",

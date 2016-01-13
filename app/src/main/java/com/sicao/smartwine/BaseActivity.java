@@ -20,8 +20,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected CircleImageView rightIcon;
     //Toolbar左侧图标
     protected ImageView leftIcon;
-    //当前连接ID
-    protected int mConnectID = -1;
     //当前设备ID
     protected String mDeviceID = "";
     //顶部标题
@@ -75,16 +73,6 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public void onBack() {
         finish();
-    }
-
-
-    public void setConnectID(int mConnectID) {
-        this.mConnectID = mConnectID;
-        UserInfoUtil.saveConnectID(this, mConnectID + "");
-    }
-
-    public int getConnectID() {
-        return Integer.parseInt(UserInfoUtil.getConnectID(this));
     }
 
     public void setDeviceID(String mDeviceID) {

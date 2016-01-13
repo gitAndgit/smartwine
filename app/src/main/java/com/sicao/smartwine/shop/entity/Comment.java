@@ -33,8 +33,17 @@ public class Comment implements Serializable {
 	private String star;
 	//是否是商品的点评
 	private boolean isGoods;
-	
-	
+	//总回复数
+	private String post_num;
+
+	public void setPost_num(String post_num) {
+		this.post_num = post_num;
+	}
+
+	public String getPost_num() {
+		return post_num;
+	}
+
 	public void setGoods(boolean isGoods) {
 		this.isGoods = isGoods;
 	}

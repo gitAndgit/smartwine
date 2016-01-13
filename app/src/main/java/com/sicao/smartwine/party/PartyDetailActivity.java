@@ -162,6 +162,8 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
     String mImagePath = "";
     //每次评论后listview滚动的位置
     int position = 0;
+    //活动的总评论数
+    int maxComment = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,10 +183,10 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     tv_supportnew.setText(topicDetail.getPraisecount() + "");
                     // 设置评论回复数
                     tv_commentnew.setText(topicDetail.getReplycount() + "");
-
+                    //
+                    maxComment = Integer.parseInt(topicDetail.getReplycount());
                     if (null != topicDetail.getTitle()
                             && !"".equals(topicDetail.getTitle())) {
-
                         tv_topic_title.setVisibility(View.VISIBLE);
                         tv_topic_title.setText(topicDetail.getTitle());
                     } else {
@@ -301,6 +303,30 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
         });
     }
 
+    /****
+     * 更新最大评论数
+     */
+    public void updateMaxCount() {
+        ApiClient.getPartyDetail(this, partyID, new ApiCallBack() {
+            @Override
+            public void response(Object object) {
+                topicDetail = (TopicDetail) object;
+                maxComment = Integer.parseInt(topicDetail.getReplycount());
+                //刷新评论，并滚动到当前的位置
+                page = 1;
+                getCommentList(partyID, page, 10,maxComment);
+            }
+        }, new ApiException() {
+            @Override
+            public void error(String error) {
+                //刷新评论，并滚动到当前的位置
+                page = 1;
+                getCommentList(partyID, page, 10,maxComment);
+            }
+        });
+    }
+
+
     @Override
 
     public String setTitle() {
@@ -387,7 +413,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                 webView.setVisibility(View.VISIBLE);
                 // 获取参加人数据
                 getPartyJoinUsers(partyID, 1, 100);
-                getCommentList(partyID, page, 10);// 获取品酒活动评论列表
+                getCommentList(partyID, page, 10,maxComment);// 获取品酒活动评论列表
                 // 判断是否显示参加/报名
                 String cyte = topicDetail.getCtype();
                 if ("3".equals(cyte)) {
@@ -608,7 +634,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onRefresh() {
                 page = 1;
-                getCommentList(partyID, page, 10);
+                getCommentList(partyID, page, 10,maxComment);
             }
         });
         // 加载更多
@@ -616,7 +642,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onLoadMore() {
                 page++;
-                getCommentList(partyID, page, 10);
+                getCommentList(partyID, page, 10,maxComment);
             }
         });
     }
@@ -946,9 +972,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     int count = Integer.parseInt(tv_commentnew.getText().toString().trim());
                     count++;
                     tv_commentnew.setText(count + "");
-                    //刷新评论，并滚动到当前的位置
-                    page = 1;
-                    getCommentList(partyID, page, 10);
+                    updateMaxCount();
                 }
             }, new ApiException() {
                 @Override
@@ -1054,8 +1078,8 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
      * @param row     数据每页显示条目数
      */
     public void getCommentList(final String partyID, final int page,
-                               final int row) {
-        ApiClient.getPartyDetailComments(this, partyID, page, row, new ApiListCallBack() {
+                               final int row,final int maxComment) {
+        ApiClient.getPartyDetailComments(this, partyID, page, row,maxComment, new ApiListCallBack() {
             @Override
             public <T> void response(ArrayList<T> list) {
                 lv_comment.onLoadMoreComplete();
@@ -1179,8 +1203,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                         lv_comment.setSelection(lv_comment.getHeaderViewsCount());
                     }
                 }
-                page = 1;
-                getCommentList(partyID, page, 10);
+                updateMaxCount();
             }
         }, null);
     }

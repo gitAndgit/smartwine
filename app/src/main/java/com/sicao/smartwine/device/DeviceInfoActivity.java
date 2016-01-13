@@ -19,6 +19,7 @@ import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.api.ApiClient;
+import com.sicao.smartwine.api.LifeClient;
 import com.sicao.smartwine.device.entity.ModelEntity;
 import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
@@ -28,15 +29,8 @@ import com.sicao.smartwine.party.PartyListActivity;
 import com.sicao.smartwine.shop.IndexActivity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
-import com.sicao.smartwine.util.ApiListCallBack;
 import com.sicao.smartwine.util.UserInfoUtil;
-import com.smartline.life.core.XMPPManager;
 import com.smartline.life.device.Device;
-
-import org.jivesoftware.smack.AbstractConnectionListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.StreamError;
 
 import java.util.ArrayList;
 
@@ -69,10 +63,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
     boolean light = false;
     // 设备
     Device mDevice;
-    // XMPP链接
-    XMPPConnection mConnection;
-    // 链接监听
-    AbstractConnectionListener mConnectionListener;
     ModelEntity entity;
 
     @Override
@@ -116,7 +106,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         ApiClient.getUserInfo(this, UserInfoUtil.getUID(this), UserInfoUtil.getToken(this), new ApiCallBack() {
             @Override
             public void response(Object object) {
-                Log.i("huahua", ((PtjUserEntity) object).getAvatar());
                 AppContext.imageLoader.displayImage(((PtjUserEntity) object).getAvatar(), rightIcon, AppContext.gallery);
             }
         }, new ApiException() {
@@ -126,34 +115,41 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             }
         });
         //登录到智捷通
-        ApiClient.login(DeviceInfoActivity.this, getString(R.string.xmpp_host), getResources().getInteger(R.integer.xmpp_port),
+        LifeClient.login(DeviceInfoActivity.this, getString(R.string.xmpp_host), getResources().getInteger(R.integer.xmpp_port),
                 getString(R.string.service), getString(R.string.source), "sicao-" + UserInfoUtil.getUID(this),
-                "sicao12345678", new ApiCallBack() {
+                "sicao12345678", new com.sicao.smartwine.api.LifeClient.ApiCallBack() {
                     @Override
                     public void response(Object object) {
                         Log.i("huahua", "智捷通登录OK-----");
                         UserInfoUtil.setLogin(DeviceInfoActivity.this, true);
-                        //设备连接ID
-                        setConnectID((Integer) object);
-                        // XMPP链接
-                        mConnection = ((XMPPManager) getApplicationContext()
-                                .getSystemService(
-                                        XMPPManager.XMPP_SERVICE))
-                                .getXMPPConnection(mConnectID);
-                        //
-                        mConnection
-                                .addConnectionListener(mConnectionListener);
                         //获取设备列表,取第一个为默认勾选设备
-                        ApiClient.getDeviceList(DeviceInfoActivity.this, new ApiListCallBack() {
+                        LifeClient.getDeviceList(getApplicationContext(), new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
                             @Override
                             public <T> void response(ArrayList<T> list) {
-                                if (list.size() <= 0) {
+                                ArrayList<Device> mList = (ArrayList<Device>) list;
+                                if (mList.size() <= 0) {
                                     Toast.makeText(DeviceInfoActivity.this, "您还没有添加酒柜设备", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                selectDevice((Device) list.get(0));
+                                if (!mList.isEmpty()) {
+                                    //已经有设备
+                                    if ("".equals(getDeviceID())) {
+                                        //有设备信息存储，但是未选择设备
+                                        mDevice = mList.get(0);
+                                        selectDevice(mDevice);
+                                    } else {
+                                        //当前有设备在展示
+                                        for (Device device : mList) {
+                                            if (getDeviceID().equals(device.getJid())) {
+                                                mDevice = device;
+                                                selectDevice(mDevice);
+                                            }
+                                            continue;
+                                        }
+                                    }
+                                }
                             }
-                        }, new ApiException() {
+                        }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                             @Override
                             public void error(String error) {
                                 Log.i("huahua", "获取设备列表" +
@@ -163,68 +159,13 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                         });
 
                     }
-                }, new ApiException() {
+                }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                     @Override
                     public void error(String error) {
                         Log.i("huahua", "智捷通登录失败-----" + error);
                         Toast.makeText(DeviceInfoActivity.this, error + "", Toast.LENGTH_SHORT).show();
                     }
                 });
-        // 监听连接的状态
-        mConnectionListener = new AbstractConnectionListener() {
-            @Override
-            public void connectionClosed() {
-                super.connectionClosed();
-
-
-            }
-
-            @Override
-            public void reconnectionFailed(Exception e) {
-                super.reconnectionFailed(e);
-                if (e instanceof XMPPException.StreamErrorException) {
-                    XMPPException.StreamErrorException xmppEx = (XMPPException.StreamErrorException) e;
-                    StreamError error = xmppEx.getStreamError();
-                    if (StreamError.Condition.conflict == error
-                            .getCondition()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (-1 != mConnectID) {
-                                    ((XMPPManager) getApplicationContext()
-                                            .getSystemService(
-                                                    XMPPManager.XMPP_SERVICE))
-                                            .connect(mConnectID);
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void connectionClosedOnError(Exception e) {
-                // 当链接发生错误关闭时会调用次方法
-                if (e instanceof XMPPException.StreamErrorException) {
-                    XMPPException.StreamErrorException xmppEx = (XMPPException.StreamErrorException) e;
-                    StreamError error = xmppEx.getStreamError();
-                    if (StreamError.Condition.conflict == error
-                            .getCondition()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (-1 != mConnectID) {
-                                    ((XMPPManager) getApplicationContext()
-                                            .getSystemService(
-                                                    XMPPManager.XMPP_SERVICE))
-                                            .connect(mConnectID);
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        };
         // 监听数据库中设备列表的数据变化
         getContentResolver().registerContentObserver(
                 DeviceMetaData.CONTENT_URI, true,
@@ -247,7 +188,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         if (null != mCabinet) {
             mCabinet = null;
         }
-        mCabinet = new WineCabinetService(mDeviceID, mConnection);
+        mCabinet = new WineCabinetService(mDeviceID, LifeClient.getConnection());
         Cursor c = getContentResolver().query(WineCabinetMetaData.CONTENT_URI,
                 null, WineCabinetMetaData.JID + "=?",
                 new String[]{mDeviceID}, null);
@@ -309,27 +250,34 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             new Handler()) {
         @Override
         public void onChange(boolean selfChange) {
-            // 2,抓取数据库中的设备列表,默认选择打开第一台设备
-            ApiClient.getDeviceList(getApplicationContext(),
-                    new ApiListCallBack() {
+            LifeClient.getDeviceList(getApplicationContext(),
+                    new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
                         @Override
                         public <T> void response(ArrayList<T> list) {
                             @SuppressWarnings("unchecked")
                             ArrayList<Device> mList = (ArrayList<Device>) list;
-                            if ("".equals(mDeviceID)) {
-                                if (mList.isEmpty()) {
-                                    // 未添加设备
-                                } else {
-                                    // 选取第一台设备作为默认
+                            if (!mList.isEmpty()) {
+                                //已经有设备
+                                if ("".equals(getDeviceID())) {
+                                    //有设备信息存储，但是未选择设备
                                     mDevice = mList.get(0);
-                                    // 3,设置该台设备的数据库监听,注意切换设备时的需要切换监控
                                     selectDevice(mDevice);
+                                } else {
+                                    //当前有设备在展示
+                                    for (Device device : mList) {
+                                        if (getDeviceID().equals(device.getJid())) {
+                                            mDevice = device;
+                                            selectDevice(mDevice);
+                                        }
+                                        continue;
+                                    }
                                 }
                             }
                         }
-                    }, new ApiException() {
+                    }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                         @Override
                         public void error(String error) {
+                            Log.i("huahua", "设备列表---错误" + error);
                         }
                     });
         }
@@ -340,7 +288,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         int id = view.getId();
         switch (id) {
             case R.id.textView13://酒柜设置
-                if (mConnectID != -1 && !"".equals(mDeviceID)) {
+                if (LifeClient.getConnectionId() != -1 && !"".equals(mDeviceID)) {
                     String smartWineMode = "";
                     String smartModeTemp = "";
                     if (null == entity) {
@@ -362,7 +310,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.imageView3://酒柜灯开关
-                if (mConnectID != -1 && !"".equals(mDeviceID)) {
+                if (LifeClient.getConnectionId() != -1 && !"".equals(mDeviceID)) {
                     if (null != mCabinet) {
                         if (mCabinet.isLight()) {
                             Toast.makeText(DeviceInfoActivity.this, "正在关闭设备灯", Toast.LENGTH_LONG).show();
@@ -376,8 +324,8 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.setting_connect://设置连接
-                if (mConnectID != -1) {
-                    startActivityForResult(new Intent(this, ConfigActivity.class).putExtra("connectid", mConnectID), 10089);
+                if (LifeClient.getConnectionId() != -1) {
+                    startActivityForResult(new Intent(this, ConfigActivity.class).putExtra("connectid", LifeClient.getConnectionId()), 10089);
                 }
                 break;
             case R.id.wineShop://美酒商城
@@ -429,7 +377,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             } else if (requestCode == 10089) {//配置新设备
                 final String jid = data.getExtras().getString("new_device_id");
                 //获取设备列表,取设备ID相同的设备信息
-                ApiClient.getDeviceList(DeviceInfoActivity.this, new ApiListCallBack() {
+                LifeClient.getDeviceList(DeviceInfoActivity.this, new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
                     @Override
                     public <T> void response(ArrayList<T> list) {
                         if (list.size() <= 0) {
@@ -442,7 +390,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                             }
                         }
                     }
-                }, new ApiException() {
+                }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                     @Override
                     public void error(String error) {
                         Log.i("huahua", "获取设备列表" +
@@ -464,8 +412,8 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 Toast.makeText(getApplicationContext(), "设备已重置",
                         Toast.LENGTH_LONG).show();
                 // 抓取数据库中的设备列表,默认选择打开第一台设备
-                ApiClient.getDeviceList(getApplicationContext(),
-                        new ApiListCallBack() {
+                LifeClient.getDeviceList(getApplicationContext(),
+                        new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
                             @Override
                             public <T> void response(ArrayList<T> list) {
                                 @SuppressWarnings("unchecked")
@@ -487,7 +435,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                     }
                                 }
                             }
-                        }, new ApiException() {
+                        }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                             @Override
                             public void error(String error) {
                             }
@@ -530,11 +478,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         try {
             getContentResolver().unregisterContentObserver(mContentObservera);
             getContentResolver().unregisterContentObserver(mContentObserver);
-            if (mConnection != null) {
-                mConnection.removeConnectionListener(mConnectionListener);
-                ((XMPPManager) getApplicationContext().getSystemService(
-                        XMPPManager.XMPP_SERVICE)).disconnect(mConnectID);
-            }
             getContentResolver().delete(mCabinetUri, null, null);
             getContentResolver().delete(DeviceMetaData.CONTENT_URI, null, null);
         } catch (Exception e) {

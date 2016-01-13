@@ -16,11 +16,9 @@ import android.widget.Toast;
 
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
-import com.sicao.smartwine.libs.DeviceMetaData;
-import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.api.ApiClient;
-import com.sicao.smartwine.util.ApiException;
-import com.sicao.smartwine.util.ApiListCallBack;
+import com.sicao.smartwine.api.LifeClient;
+import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.util.UserInfoUtil;
 import com.smartline.life.device.Device;
 
@@ -91,7 +89,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                         !"SSID:".equals(SSID.getText().toString().trim()) &&
                         !TextUtils.isEmpty(password.getText().toString().trim())) {
                     //执行WIFI配置
-                    ApiClient.configWIFIToDevice(getApplicationContext(),
+                    LifeClient.configWIFIToDevice(getApplicationContext(),
                             wifi.SSID, password.getText().toString()
                                     .trim());
 
@@ -131,8 +129,8 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
         @Override
         public void onChange(boolean selfChange) {
             // 1,获取发现列表里面的数据
-            ApiClient.getNativeConfigDeviceList(getApplicationContext(),
-                    new ApiListCallBack() {
+            LifeClient.getNativeConfigDeviceList(getApplicationContext(),
+                    new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
                         @Override
                         public <T> void response(ArrayList<T> list) {
                             Log.i("huahua", "发现设备列表----" + list.size());
@@ -144,13 +142,13 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                                 if (null != wifi) {
                                     if (-1 != mConnectID) {
                                         Log.i("huahua", "发现设备列表--连接ID--" + mConnectID);
-                                        ApiClient
+                                        LifeClient
                                                 .addDevice(
                                                         getApplicationContext(),
                                                         mConnectID,
                                                         d,
                                                         "新朝智能酒柜",
-                                                        new ApiCallBack() {
+                                                        new com.sicao.smartwine.api.LifeClient.ApiCallBack() {
                                                             @Override
                                                             public void response(
                                                                     Object object) {
@@ -169,7 +167,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                                                                                 null);
                                                             }
                                                         },
-                                                        new ApiException() {
+                                                        new com.sicao.smartwine.api.LifeClient.ApiException() {
                                                             @Override
                                                             public void error(
                                                                     String error) {
@@ -187,7 +185,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                             }
 
                         }
-                    }, new ApiException() {
+                    }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                         @Override
                         public void error(String error) {
                             Toast.makeText(getApplicationContext(), "请重新配置设备",

@@ -16,31 +16,31 @@
     </declare-styleable>
 
     <!-- 酒柜部分 -->
-    <declare-styleable name="Device">
-        <attr name="name" format="reference|string" />
-        <attr name="model" format="string" />
-        <attr name="manufacturer" format="reference|string" />
-        <attr name="onlineIcon" format="reference" />
-        <attr name="offlineIcon" format="reference" />
+    <!--<declare-styleable name="Device">-->
+        <!--<attr name="name" format="reference|string" />-->
+        <!--<attr name="model" format="string" />-->
+        <!--<attr name="manufacturer" format="reference|string" />-->
+        <!--<attr name="onlineIcon" format="reference" />-->
+        <!--<attr name="offlineIcon" format="reference" />-->
 
-        <attr name="type" format="string" />
-        <attr name="typeIcon" format="reference" />
-        <attr name="uri" format="string" />
+        <!--<attr name="type" format="string" />-->
+        <!--<attr name="typeIcon" format="reference" />-->
+        <!--<attr name="uri" format="string" />-->
 
-        <attr name="entity" format="string" />
-        <attr name="service" format="string" />
-        <attr name="provider" format="string" />
-        <attr name="controlActivity" format="string" />
-        <attr name="p2p" format="boolean" />
-        <!--config-->
-        <attr name="directconfig" format="boolean" />
-        <attr name="directconfigTip" format="reference|string" />
-        <attr name="smartconfig" format="boolean" />
-        <attr name="smartconfigVersion" format="string" />
-        <attr name="smartconfigTip" format="reference|string" />
+        <!--<attr name="entity" format="string" />-->
+        <!--<attr name="service" format="string" />-->
+        <!--<attr name="provider" format="string" />-->
+        <!--<attr name="controlActivity" format="string" />-->
+        <!--<attr name="p2p" format="boolean" />-->
+        <!--&lt;!&ndash;config&ndash;&gt;-->
+        <!--<attr name="directconfig" format="boolean" />-->
+        <!--<attr name="directconfigTip" format="reference|string" />-->
+        <!--<attr name="smartconfig" format="boolean" />-->
+        <!--<attr name="smartconfigVersion" format="string" />-->
+        <!--<attr name="smartconfigTip" format="reference|string" />-->
 
-        <!--Timer-->
-        <attr name="timerActions" format="reference" />
-        <attr name="timerLabels" format="reference" />
-    </declare-styleable>
+        <!--&lt;!&ndash;Timer&ndash;&gt;-->
+        <!--<attr name="timerActions" format="reference" />-->
+        <!--<attr name="timerLabels" format="reference" />-->
+    <!--</declare-styleable>-->
 </resources>
