@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -513,8 +512,12 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                                                     return;
                                                 }
                                                 //报名
-//                                                actionFeelDrink(partyID);
-                                                Toast.makeText(PartyDetailActivity.this, "报名", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(PartyDetailActivity.this, PartySignUpActivity.class);
+                                                intent.putExtra("topic_id", partyID);
+                                                intent.putExtra("max_person_number", topicDetail.getPeople());
+                                                intent.putExtra("one_person_pay_money", topicDetail.getFee());
+                                                intent.putExtra("name", topicDetail.getTitle());
+                                                startActivity(intent);
                                             }
 
                                         });
@@ -1192,7 +1195,6 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     int count = Integer.parseInt(tv_commentnew.getText().toString().trim());
                     count--;
                     tv_commentnew.setText(count + "");
-                    Log.i("huahua", "position=" + position + ";headcount=" + lv_comment.getHeaderViewsCount());
                     if (position != 0) {
                         //删除的不是第一条回复
                         lv_comment.requestFocusFromTouch();

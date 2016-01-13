@@ -214,7 +214,7 @@ public class WXPayManager {
 			packageParams
 					.add(new BasicNameValuePair("appid", Constants.APP_ID));
 			// 描述
-			packageParams.add(new BasicNameValuePair("body", "test"));
+			packageParams.add(new BasicNameValuePair("body", order.getGoods().getWineName()));
 			packageParams
 					.add(new BasicNameValuePair("mch_id", Constants.MCH_ID));
 			packageParams.add(new BasicNameValuePair("nonce_str", nonceStr));

@@ -286,6 +286,7 @@ public class ApiClient {
                 }
                 return;
             }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {
@@ -295,6 +296,7 @@ public class ApiClient {
             }
         });
     }
+
     /***
      * 配置设备的工作模式(葡萄集)
      *
@@ -1095,7 +1097,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getPartyDetailComments(Context context, String partyID, int page, int row,final int maxComment,
+    public static void getPartyDetailComments(Context context, String partyID, int page, int row, final int maxComment,
                                               final ApiListCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/listPost?userToken="
@@ -1113,7 +1115,7 @@ public class ApiClient {
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject comment = array.getJSONObject(i);
                             Comment c = new Comment();
-                            c.setPost_num(maxComment+"");
+                            c.setPost_num(maxComment + "");
                             // 一级回复内容
                             c.setContent(comment.getString("content"));
                             // 一级回复id
@@ -1379,6 +1381,111 @@ public class ApiClient {
                         }
                         if (null != callBack) {
                             callBack.response(entity);
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /**
+     * 品酒活动生成临时报名信息
+     *
+     * @param context   上下文对象
+     * @param row_id
+     * @param tel
+     * @param sign_num
+     * @param price
+     * @param name
+     * @param callBack
+     * @param exception
+     */
+    public static void createTemporarySignUp(Context context, String row_id, String tel,
+                                             String sign_num, String price, final String name,
+                                             final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/enrollment";
+        RequestParams params = new RequestParams();
+        params.put("userToken",
+                UserInfoUtil.getToken(context));
+        params.put("row_id", row_id);
+        params.put("tel", tel);
+        params.put("sign_num", sign_num);
+        params.put("total_price", price);
+        params.put("name", name);
+        httpClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        OrderEntity entity = new OrderEntity();
+                        JSONObject list = object.getJSONObject("info")
+                                .getJSONObject("list");
+                        WineEntity wine = new WineEntity();
+                        wine.setId(list.getString("enroid"));
+                        wine.setWineName(name);
+                        entity.setGoods(wine);
+                        entity.setOrderId(list.getString("id"));
+                        entity.setOrderNumber(list
+                                .getString("order_sn"));
+                        entity.setOrderTime(list
+                                .getString("create_time"));
+                        entity.setOrderPrice(list
+                                .getString("total_price"));
+                        entity.setState(list.getString("order_status"));
+                        if (null != callBack) {
+                            callBack.response(entity);
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 支付成功后告知后台支付OK
+     *
+     * @param context
+     * @param enroid
+     * @param ordernumber
+     * @param callBack
+     * @param exception
+     */
+    public static void makesurePaySuccess(Context context, String enroid, String ordernumber,
+                                          final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/enrollStatus?enroid=" + enroid
+                + "&order_sn=" + ordernumber + "&userToken=" + UserInfoUtil.getToken(context);
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        if (null != callBack) {
+                            callBack.response(true);
                         }
                         return;
                     }
