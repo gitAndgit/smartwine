@@ -24,6 +24,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected String mDeviceID = "";
     //顶部标题
     TextView title;
+    //右侧按钮
+    protected TextView rightText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 onBack();
             }
         });
+        //右侧按钮
+        rightText=(TextView)findViewById(R.id.right_text);
         View view = View.inflate(this, setView(), null);
         params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         view.setLayoutParams(params);

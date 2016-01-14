@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".shop.ShopReviewsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/write"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/ll_star"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="评价：" />
+
+            <ImageView
+                android:id="@+id/iv_prisent_no1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/prisent_hava" />
+
+            <ImageView
+                android:id="@+id/iv_prisent_no2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/prisent_hava" />
+
+            <ImageView
+                android:id="@+id/iv_prisent_no3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/prisent_hava" />
+
+            <ImageView
+                android:id="@+id/iv_prisent_no4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/prisent_no" />
+
+            <ImageView
+                android:id="@+id/iv_prisent_no5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/prisent_no" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_coloc_bg"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@color/photo_border_color" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:text="评价内容" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/photo_border_color"
+            />
+
+        <EditText
+            android:id="@+id/et_commentcontent"
+            android:gravity="top"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="请输入你需要评价的内容"
+            android:background="@null"
+            android:textColor="#000000"
+            android:textSize="12dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <ImageView
+                android:id="@+id/iv_addphone"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:padding="10dp"
+                android:src="@drawable/icon_addpic_unfocused"
+                />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:id="@+id/iv_phonecontent"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/photo_border_color"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+
+            />
+    </LinearLayout>
+</LinearLayout>

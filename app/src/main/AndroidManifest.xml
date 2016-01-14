@@ -112,7 +112,7 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <!-- SHARE  SDK  2.6.5 -->
         <activity
             android:name="com.mob.tools.MobUIShell"
@@ -174,17 +174,19 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-
         <activity
             android:name=".party.PartySignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- 微信支付相关 -->
         <activity
-            android:name="com.sicao.smartwine.wxapi.WXPayEntryActivity"
+            android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
             android:launchMode="singleTop" />
+        <activity
+            android:name=".shop.ShopReviewsActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
     </application>
 
 </manifest>

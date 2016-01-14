@@ -54,4 +54,5 @@
     <string name="title_activity_party_list_info">品酒活动</string>
     <string name="title_activity_party_detail_info">活动详情</string>
     <string name="title_activity_party_signup_info">活动报名</string>
+    <string name="title_activity_shop_reviews_info">商品点评</string>
 </resources>

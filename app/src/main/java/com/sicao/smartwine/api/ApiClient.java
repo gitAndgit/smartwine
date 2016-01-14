@@ -47,7 +47,7 @@ import java.util.ArrayList;
  * Created by mingqi'li on 2015/12/21.
  */
 public class ApiClient {
-    private static String URL = "http://www.putaoji.com/Apiv5/";
+    public static String URL = "http://www.putaoji.com/Apiv5/";
     //请求帮助类
     private static AsyncHttpClient mHttp;
 
@@ -602,6 +602,7 @@ public class ApiClient {
 
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getDealDetailFromReviewArticle?userToken=" + UserInfoUtil.getToken(context) + "&deal_id=" + goodid;
+        Log.i("huahua", "商品详情--" + url);
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -1494,6 +1495,58 @@ public class ApiClient {
                 }
             }
 
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 增加商品评价(一级,二级)
+     *
+     * @param context      上下文对象
+     * @param deal_id      商品ID
+     * @param content      评价内容
+     * @param attach_ids   评价内容中的图片ID组
+     * @param type         评价类型(-1,没有图片为0)
+     * @param pid          被评价者ID
+     * @param star         评价的星级
+     * @param bitmap_paths 图片的路径url拼接起来的字符串(七牛云存储图片)
+     * @param callBack     接口执行OK回调的对象
+     * @param exception    接口执行失败回调的对象
+     */
+    public static void sendCommentForShop(Context context, String deal_id, String content,
+                                          String attach_ids, String type, String pid,
+                                          String star, String bitmap_paths, final ApiCallBack callBack,
+                                          final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/newDealComment?userToken=" + UserInfoUtil.getToken(context);
+        RequestParams params = new RequestParams();
+        params.put("deal_id", deal_id);
+        params.put("content", content);
+        params.put("attach_ids", attach_ids);
+        params.put("type", type);
+        params.put("pid", pid);
+        params.put("star", star);
+        params.put("img_paths", bitmap_paths);// 七牛云存储图片
+        httpClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        if (null != callBack) {
+                            callBack.response(true);
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                }
+            }
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {

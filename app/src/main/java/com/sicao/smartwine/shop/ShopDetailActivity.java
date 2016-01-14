@@ -1,6 +1,7 @@
 package com.sicao.smartwine.shop;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -74,11 +75,8 @@ public class ShopDetailActivity extends BaseActivity {
     private boolean isLoading = false;// 是否正在加载
     private int page = 1;
     private Handler mHandler;
-    // 对评论执行点赞的index
-    private int index = 0;
-    private CircularBannerView my_banner;// 版蓝图
+    private CircularBannerView my_banner;// Banner图
     private LinearLayout ll_support, ll_shares, ll_collects, ll_to_buys;
-    private boolean isload = false;// 是否是去登陆了，如果中间过程登陆了为真 没有登陆为假
     private ArrayList<String> images = new ArrayList<String>();
     //酒窖信息
     private FrameLayout jiujiaoLayout;
@@ -139,6 +137,7 @@ public class ShopDetailActivity extends BaseActivity {
 
                     }
                 }
+                //是否已经点赞了
                 if (mGoods.isIs_support()) {
                     ll_support.setTag("true");
                     iv_support_ig.setImageResource(R.drawable.ic_support_p);
@@ -146,7 +145,7 @@ public class ShopDetailActivity extends BaseActivity {
                     ll_support.setTag("false");
                     iv_support_ig.setImageResource(R.drawable.ic_support_gray);
                 }
-                url=mGoods.getBuy_address();
+                url = mGoods.getBuy_address();
                 tv_to_buys.setVisibility(View.VISIBLE);
                 if (url.equals("")) {
                     tv_to_buys.setText("购买");
@@ -158,7 +157,7 @@ public class ShopDetailActivity extends BaseActivity {
                 } else {
                     tv_to_buys.setText("前往 京东 购买");
                 }
-                getCommentList(id,page,10);
+                getCommentList(id, page, 10);
             }
         }, new ApiException() {
             @Override
@@ -196,8 +195,8 @@ public class ShopDetailActivity extends BaseActivity {
         mLine3 = (TextView) findViewById(R.id.line3);
         // 底部四个按钮
         ll_support = (LinearLayout) findViewById(R.id.ll_support);// 点赞
-        ll_shares = (LinearLayout) findViewById(R.id.ll_shares);// 分享 更改成收藏
-        ll_collects = (LinearLayout) findViewById(R.id.ll_collects);// 收藏 更改成点评
+        ll_shares = (LinearLayout) findViewById(R.id.ll_shares);// 分享 更改成点评
+        ll_collects = (LinearLayout) findViewById(R.id.ll_collects);// 收藏 更改成分享
         ll_to_buys = (LinearLayout) findViewById(R.id.ll_to_buys);// 购买布局
         tv_to_buys = (TextView) findViewById(R.id.tv_to_buys);// 购买要显示的文字
         iv_support_ig = (ImageView) findViewById(R.id.iv_support_ig);// 点赞图像
@@ -209,6 +208,7 @@ public class ShopDetailActivity extends BaseActivity {
         shopIcon = (ImageView) findViewById(R.id.hotel_icon);
         rr_promise = (RelativeLayout) findViewById(R.id.rr_promise);//我们的承诺
         tv_add_shop_car = (TextView) findViewById(R.id.tv_add_shop_car);
+
         jiujiaoLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,14 +260,6 @@ public class ShopDetailActivity extends BaseActivity {
 
             @Override
             public void onClick(int index, final Comment comment) {
-                if (!UserInfoUtil.getLogin(ShopDetailActivity.this)) {
-                    //重新登陆
-//                    UIHelper.startLoginActivity(ShopDetailActivity.this,
-//                            false);
-                    isload = true;
-                    return;
-                }
-
                 if (comment
                         .getUser()
                         .getUid()
@@ -284,7 +276,7 @@ public class ShopDetailActivity extends BaseActivity {
                         @Override
                         public void onClick(String value) {
                             if ("删除评论".equals(value)) {
-//                                getDelComment(id);// 删除接口
+                                getDelComment(comment.getId());// 删除接口
                             }
                             removeWindow.dismiss();
                         }
@@ -293,11 +285,11 @@ public class ShopDetailActivity extends BaseActivity {
                 }
                 // 二层回复的上层回复id
                 pid = Integer.parseInt(comment.getId());
-//                Intent intent = new Intent(ShopDetailActivity.this,
-//                        WinComment.class);
-//                intent.putExtra("pid", pid);
-//                intent.putExtra("deal_id", id + "");
-//                startActivityForResult(intent, 202);
+                Intent intent = new Intent(ShopDetailActivity.this,
+                        ShopReviewsActivity.class);
+                intent.putExtra("pid", pid);
+                intent.putExtra("deal_id", id + "");
+                startActivityForResult(intent, 202);
 
             }
         });
@@ -305,13 +297,6 @@ public class ShopDetailActivity extends BaseActivity {
         adapter.setChildItemChildClickListener(new CommentItemChildClickListener() {
             @Override
             public void onClick(int position, final CommentList comment) {
-                if (!UserInfoUtil.getLogin(ShopDetailActivity.this)) {
-                    //重新登陆
-//                    UIHelper.startLoginActivity(ShopDetailActivity.this,
-//                            false);
-                    isload = true;
-                    return;
-                }
                 // 二层回复删除事件
                 if (comment.getUida().equals(
                         UserInfoUtil.getUID(ShopDetailActivity.this))) {
@@ -325,7 +310,7 @@ public class ShopDetailActivity extends BaseActivity {
                         @Override
                         public void onClick(String value) {
                             if ("删除评论".equals(value)) {
-//                                getDelComment(id);// 删除接口
+                                getDelComment(comment.getCommentListid() + "");// 删除接口
                             }
                             removeWindow.dismiss();
                         }
@@ -334,11 +319,11 @@ public class ShopDetailActivity extends BaseActivity {
                 }
                 // 二层回复的上层回复id
                 pid = comment.getCommentListid();
-//                Intent intent = new Intent(ShopDetailActivity.this,
-//                        WinComment.class);
-//                intent.putExtra("pid", pid);
-//                intent.putExtra("deal_id", id + "");
-//                startActivityForResult(intent, 202);
+                Intent intent = new Intent(ShopDetailActivity.this,
+                        ShopReviewsActivity.class);
+                intent.putExtra("pid", pid);
+                intent.putExtra("deal_id", id + "");
+                startActivityForResult(intent, 202);
             }
         });
         // 对一层评论添加点赞
@@ -355,6 +340,16 @@ public class ShopDetailActivity extends BaseActivity {
         });
         tv_to_buys.setVisibility(View.GONE);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lv_comment.getVisibility() == View.VISIBLE) {
+            page = 1;
+            getCommentList(id, page, 10);
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     public void onClick(View v) {
         switch (v.getId()) {
@@ -438,14 +433,16 @@ public class ShopDetailActivity extends BaseActivity {
                 getCommentList(id, page, 10);
                 break;
             case R.id.img:
-            case R.id.ll_shares:
-                // 点评
-//                        Intent intent = new Intent(ShopDetailActivity.this,
-//                                WinComment.class);
-//                        pid = 0;
-//                        intent.putExtra("pid", pid);
-//                        intent.putExtra("deal_id", id + "");
-//                        startActivityForResult(intent, 201);
+            case R.id.ll_shares:// 点评
+                Intent intent = new Intent(ShopDetailActivity.this,
+                        ShopReviewsActivity.class);
+                pid = 0;
+                intent.putExtra("pid", pid);
+                intent.putExtra("deal_id", id + "");
+                startActivityForResult(intent, 201);
+                break;
+            case R.id.ll_collects://分享
+                AppContext.share(this, mGoods.getShare(), null);
                 break;
             case R.id.textView1:// 购买
                 break;
@@ -453,6 +450,7 @@ public class ShopDetailActivity extends BaseActivity {
                 String textmessage = tv_to_buys.getText().toString().trim();
                 if (textmessage.equals("购买")) {
                     //本地购买
+
                 } else {
                     //第三方都买
                 }
@@ -461,22 +459,34 @@ public class ShopDetailActivity extends BaseActivity {
                 //添加到购物车
                 break;
             case R.id.ll_support:
-                if (!UserInfoUtil.getLogin(this)) {
-//                    UIHelper.startLoginActivity(this, false);
-                    isload = true;
-                    return;
-                }
                 if (ll_support.getTag().equals("true")) {
                     // 取消点赞
+                    ApiClient.ThumbsUp(this, id, "6", false, new ApiCallBack() {
+                        @Override
+                        public void response(Object object) {
+                            ll_support.setTag("false");
+                            iv_support_ig.setImageResource(R.drawable.ic_support_gray);
+                        }
+
+                    }, null);
                 } else {
                     // 点赞
+                    ApiClient.ThumbsUp(this, id, "6", true, new ApiCallBack() {
+                        @Override
+                        public void response(Object object) {
+                            ll_support.setTag("true");
+                            iv_support_ig.setImageResource(R.drawable.ic_support_p);
+                        }
+                    }, null);
                 }
+
                 break;
         }
     }
 
     /***
      * 获取商品的回复列表
+     *
      * @param topic_id
      * @param page
      * @param row
@@ -486,10 +496,10 @@ public class ShopDetailActivity extends BaseActivity {
         ApiClient.getCommentList(this, topic_id, page, row, new ApiListCallBack() {
             @Override
             public <T> void response(ArrayList<T> list) {
-                ArrayList<Comment>mlist=(ArrayList<Comment>)list;
-                if (page==1){
-                    list_comment=mlist;
-                }else{
+                ArrayList<Comment> mlist = (ArrayList<Comment>) list;
+                if (page == 1) {
+                    list_comment = mlist;
+                } else {
                     list_comment.addAll(mlist);
                 }
                 adapter.update(list_comment);
@@ -500,5 +510,17 @@ public class ShopDetailActivity extends BaseActivity {
 
             }
         });
+    }
+
+    // 调用回复删除的方法
+    public void getDelComment(String id) {
+        ApiClient.deleteComment(this, id, "2", new ApiCallBack() {
+            @Override
+            public void response(Object object) {
+                isLoading = false;
+                page = 1;
+                getCommentList(ShopDetailActivity.this.id, page, 10);
+            }
+        }, null);
     }
 }
