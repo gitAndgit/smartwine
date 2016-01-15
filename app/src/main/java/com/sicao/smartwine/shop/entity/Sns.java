@@ -307,7 +307,7 @@ public class Sns implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Sns [id=" + id + ", title=" + title + ", description="
+		return "Sns [id=" + id + ",cid=" + cid +", title=" + title + ", description="
 				+ description + ", link_id=" + link_id + ", view=" + view
 				+ ", comment=" + comment + ", create_time=" + create_time
 				+ ", update_time=" + update_time + ", ctype=" + ctype

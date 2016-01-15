@@ -27,6 +27,7 @@ import com.sicao.smartwine.libs.WineCabinetMetaData;
 import com.sicao.smartwine.libs.WineCabinetService;
 import com.sicao.smartwine.party.PartyListActivity;
 import com.sicao.smartwine.shop.IndexActivity;
+import com.sicao.smartwine.user.FeedBackActivity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.UserInfoUtil;
@@ -122,42 +123,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                     public void response(Object object) {
                         Log.i("huahua", "智捷通登录OK-----");
                         UserInfoUtil.setLogin(DeviceInfoActivity.this, true);
-                        //获取设备列表,取第一个为默认勾选设备
-                        LifeClient.getDeviceList(getApplicationContext(), new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
-                            @Override
-                            public <T> void response(ArrayList<T> list) {
-                                ArrayList<Device> mList = (ArrayList<Device>) list;
-                                if (mList.size() <= 0) {
-                                    Toast.makeText(DeviceInfoActivity.this, "您还没有添加酒柜设备", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                if (!mList.isEmpty()) {
-                                    //已经有设备
-                                    if ("".equals(getDeviceID())) {
-                                        //有设备信息存储，但是未选择设备
-                                        mDevice = mList.get(0);
-                                        selectDevice(mDevice);
-                                    } else {
-                                        //当前有设备在展示
-                                        for (Device device : mList) {
-                                            if (getDeviceID().equals(device.getJid())) {
-                                                mDevice = device;
-                                                selectDevice(mDevice);
-                                            }
-                                            continue;
-                                        }
-                                    }
-                                }
-                            }
-                        }, new com.sicao.smartwine.api.LifeClient.ApiException() {
-                            @Override
-                            public void error(String error) {
-                                Log.i("huahua", "获取设备列表" +
-                                        "失败-----" + error);
-                                Toast.makeText(DeviceInfoActivity.this, error + "", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
                     }
                 }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                     @Override
@@ -181,6 +146,8 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         getContentResolver().unregisterContentObserver(mContentObservera);
         // 设备后台编号
         mDeviceID = mDevice.getJid();
+        Log.i("huahua", "UDID=" + mDevice.getUDID());
+
         setDeviceID(mDeviceID);
         // 设备名称
         String name = mDevice.getName();
@@ -338,7 +305,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 Toast.makeText(DeviceInfoActivity.this, "美酒提醒", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.yijian://意见反馈
-                Toast.makeText(DeviceInfoActivity.this, "意见反馈", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, FeedBackActivity.class));
                 break;
         }
     }

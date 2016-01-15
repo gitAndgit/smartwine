@@ -29,6 +29,7 @@ import com.sicao.smartwine.shop.adapter.SnsCommentAdapter.SupportListener;
 import com.sicao.smartwine.shop.entity.Comment;
 import com.sicao.smartwine.shop.entity.CommentList;
 import com.sicao.smartwine.shop.entity.GoodsEntity;
+import com.sicao.smartwine.shop.entity.WineEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListCallBack;
@@ -450,7 +451,21 @@ public class ShopDetailActivity extends BaseActivity {
                 String textmessage = tv_to_buys.getText().toString().trim();
                 if (textmessage.equals("购买")) {
                     //本地购买
-
+                    final WineEntity mgood = new WineEntity();
+                    mgood.setWineName(mGoods.getName());
+                    mgood.setWineImg(mGoods.getIcon());
+                    mgood.setId(mGoods.getId());
+                    final WineEntity mmeal = new WineEntity();
+                    mmeal.setPrice(mGoods.getCurrent_price());
+                    mmeal.setDetail(mGoods.getDescription());
+                    mmeal.setOldPrice(1 + "");// 商品的数量
+                    mmeal.setId("0");
+                    // 进入下订单页面
+                    Intent intent2 = new Intent(this,
+                            CreateOrderActivity.class);
+                    intent2.putExtra("wine", mgood);
+                    intent2.putExtra("meal", mmeal);
+                    startActivity(intent2);
                 } else {
                     //第三方都买
                 }

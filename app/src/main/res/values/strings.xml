@@ -55,4 +55,6 @@
     <string name="title_activity_party_detail_info">活动详情</string>
     <string name="title_activity_party_signup_info">活动报名</string>
     <string name="title_activity_shop_reviews_info">商品点评</string>
+    <string name="title_activity_shop_createorder_info">确认订单</string>
+    <string name="title_activity_user_feedback_info">意见反馈</string>
 </resources>

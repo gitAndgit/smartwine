@@ -23,4 +23,18 @@ public class Constants {
      */
     public static final String JOIN_PARTY_SUCCESS = "JOIN_PARTY_SUCCESS";
 
+
+    /*
+     * 修改地址
+     */
+    public static final int REVISE_ADDRESS = 10100;
+    /*
+     * 选择优惠券
+     */
+    public static final int SELECT_INVITE = 10103;
+    /*
+	 * 用户反馈
+	 */
+    public static final int FEED_BACK_USER = 1;
+
 }

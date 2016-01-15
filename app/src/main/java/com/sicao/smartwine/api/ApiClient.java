@@ -55,7 +55,6 @@ public class ApiClient {
 
         if (null == mHttp) {
             mHttp = new AsyncHttpClient();
-            mHttp.setResponseTimeout(2000);
         }
         return mHttp;
     }
@@ -776,7 +775,6 @@ public class ApiClient {
     public static void getPartyList(Context context, int cType, int page, int mark,
                                     final ApiListCallBack callback,
                                     final ApiException exception) {
-
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/listActivity?userToken=" + UserInfoUtil.getToken(context)
                 + "&page=" + page + "&row=10";
@@ -810,7 +808,6 @@ public class ApiClient {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -836,6 +833,7 @@ public class ApiClient {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getNewTopicDetail?userToken="
                 + UserInfoUtil.getToken(context) + "&topic_id=" + partyID;
+        Log.i("huahua", "活动详情-" + url);
         httpClient.get(url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int k, Header[] headers, byte[] bytes) {
@@ -1547,6 +1545,7 @@ public class ApiClient {
                 } catch (Exception e) {
                 }
             }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {
@@ -1556,4 +1555,173 @@ public class ApiClient {
             }
         });
     }
+
+    /***
+     * 获取我的默认地址
+     *
+     * @param context   上下文对象
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void getDefaultAddress(Context context, final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getDefaultAddress?userToken=" + UserInfoUtil.getToken(context);
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        Address entity = null;
+                        JSONObject info = object.getJSONObject("info");
+                        JSONArray array = info.getJSONArray("list");
+                        if (array.length() > 0) {
+                            entity = new Address();
+                            JSONObject address = array.getJSONObject(0);
+                            entity.setAddress(address.getString("address"));
+                            entity.setPhone(address.getString("tel"));
+                            entity.setName(address.getString("realName"));
+                            entity.setId(address.getString("id"));
+                        }
+                        if (null != callBack) {
+                            callBack.response(entity);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 获取订单详情信息
+     *
+     * @param context   上下文对象
+     * @param orderID   订单ID
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void getOrderInfo(Context context, String orderID, final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getMyOrderDetail?userToken=" + UserInfoUtil.getToken(context) + "&order_id=" + orderID;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        JSONObject info = object.getJSONObject("info");
+                        // 订单
+                        OrderEntity oentity = new OrderEntity();
+                        oentity.setOrderId(info.getString("id"));// 订单id
+                        oentity.setOrderNumber(info.getString("order_sn"));// 订单号
+                        oentity.setOrderPrice(info.getString("total_price"));// 订单价格
+                        oentity.setState(info.getString("current_status"));// 订单状态
+                        // 商品信息
+                        WineEntity wine = new WineEntity();
+                        wine.setWineName(info.getString("name"));
+                        wine.setPrice(info.getString("unit_price"));
+                        wine.setOldPrice(info.getString("origin_price"));
+                        wine.setWineImg(info.getString("icon"));
+                        wine.setDetail(info.getString("description"));
+                        // 规格信息
+                        WineEntity meal = new WineEntity();
+                        meal.setWineName(info.getString("specify_name") + "");
+                        // 收货人地址栏信息
+                        Address address = new Address();
+                        address.setAddress(info.getString("address"));
+                        address.setName(info.getString("consignee"));
+                        address.setPhone(info.getString("mobile"));
+                        // 1，设置地址信息
+                        oentity.setAddress(address);
+                        // 2，设置商品信息
+                        oentity.setGoods(wine);
+                        // 3，设置规格信息
+                        oentity.setMeal(meal);
+                        if (null != callBack) {
+                            callBack.response(oentity);
+                        }
+                        return;
+
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 用户反馈接口/帖子举报接口
+     *
+     * @param context   上下文对象
+     * @param userToken 用户登录标识
+     * @param type      1用户反馈 2帖子举报
+     * @param remark    type为1时传递
+     * @param tid       type为2时传递
+     */
+    public static void feedBack(final Context context, final String userToken,
+                                final int type, final String remark, final String tid,
+                                final ApiCallBack callback, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/recordUserAction?userToken=" + userToken;
+        RequestParams params = new RequestParams();
+        params.put("type", type + "");
+        if (type == 1) {
+            // 用户反馈
+            params.put("remark", remark + "");
+        } else if (type == 2) {
+            // 帖子举报
+            params.put("tid", tid + "");
+        }
+        httpClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (object.getBoolean("status")) {
+                        if (null != callback) {
+                            callback.response(object);
+                        }
+                    } else {
+                        if (null != exception) {
+                            exception.error(object.getString("info"));
+                        } else {
+                            Log.e("putaoji", "topic reback error :"
+                                    + object.getString("info"));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+
+                }
+                return;
+            }
+        });
+    }
+
+
 }

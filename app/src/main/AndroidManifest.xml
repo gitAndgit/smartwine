@@ -185,8 +185,13 @@
             android:launchMode="singleTop" />
         <activity
             android:name=".shop.ShopReviewsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".shop.CreateOrderActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".user.FeedBackActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.sicao.smartwine.party.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -135,6 +136,7 @@ public class PartyListAdapter extends BaseAdapter {
                     Intent intent = new Intent(context,
                             PartyDetailActivity.class);
                     intent.putExtra("partyID", sns.getCid());
+                    Log.i("huahua","partyID="+sns.getCid()+"\n"+sns.toString());
                     context.startActivity(intent);
                 }
             });
