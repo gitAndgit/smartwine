@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.api.ApiClient;
@@ -81,7 +80,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         leftIcon.setVisibility(View.GONE);
         //右侧头像
-        rightIcon.setImageResource(R.drawable.ic_back);
+        rightIcon.setVisibility(View.VISIBLE);
         //
         wineSetting = (TextView) findViewById(R.id.textView13);
         wineSetting.setOnClickListener(this);
@@ -107,7 +106,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         ApiClient.getUserInfo(this, UserInfoUtil.getUID(this), UserInfoUtil.getToken(this), new ApiCallBack() {
             @Override
             public void response(Object object) {
-                AppContext.imageLoader.displayImage(((PtjUserEntity) object).getAvatar(), rightIcon, AppContext.gallery);
+                rightIcon.setImageURI(Uri.parse(((PtjUserEntity) object).getAvatar()));
             }
         }, new ApiException() {
             @Override

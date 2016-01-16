@@ -2,6 +2,7 @@ package com.sicao.smartwine.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -11,12 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.sicao.smartwine.AppContext;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.R;
 
 /**
@@ -171,12 +171,10 @@ public class CircularBannerView extends RelativeLayout {
 
 		@Override
 		public Object instantiateItem(ViewGroup container, final int position) {
-			final ImageView imageView = new ImageView(context);
-			imageView.setScaleType(ScaleType.CENTER_CROP);
-			imageView.setImageResource(R.drawable.ic_launcher);
+			final SimpleDraweeView imageView = new SimpleDraweeView(context);
 			if (imageUrl.length > 0) {
-				AppContext.imageLoader.displayImage(imageUrl[position
-						% imageUrl.length], imageView, AppContext.gallery);
+				imageView.setImageURI(Uri.parse(imageUrl[position
+						% imageUrl.length]));
 			}
 			container.addView(imageView);
 			imageView.setOnClickListener(new OnClickListener() {

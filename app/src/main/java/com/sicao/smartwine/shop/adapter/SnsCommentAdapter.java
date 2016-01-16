@@ -1,6 +1,7 @@
 package com.sicao.smartwine.shop.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.shop.entity.Comment;
@@ -73,7 +75,7 @@ public class SnsCommentAdapter extends BaseAdapter {
 			convertView = View.inflate(context, R.layout.comment_list_item,
 					null);
 			viewHolder = new ViewHolder();
-			viewHolder.iv_photo = (ImageView) convertView
+			viewHolder.iv_photo = (SimpleDraweeView) convertView
 					.findViewById(R.id.iv_photo);
 			viewHolder.tv_nickname = (TextView) convertView
 					.findViewById(R.id.tv_nickname);
@@ -85,7 +87,7 @@ public class SnsCommentAdapter extends BaseAdapter {
 					.findViewById(R.id.ll_mjk);
 			viewHolder.tv_mjk = (TextView) convertView
 					.findViewById(R.id.tv_mjk);
-			viewHolder.iv_mjk = (ImageView) convertView
+			viewHolder.iv_mjk = (SimpleDraweeView) convertView
 					.findViewById(R.id.iv_mjk);
 			viewHolder.mCommentList = (NoScrollListView) convertView
 					.findViewById(R.id.list_comment_2);
@@ -124,8 +126,7 @@ public class SnsCommentAdapter extends BaseAdapter {
 
 		final int index = position;
 		if (comment != null && comment.getUser() != null) {
-			AppContext.imageLoader.displayImage(comment.getUser().getAvatar(),
-					viewHolder.iv_photo, AppContext.gallery);
+			viewHolder.iv_photo.setImageURI(Uri.parse(comment.getUser().getAvatar()));
 			viewHolder.tv_nickname
 					.setText(comment.getUser().getNickname() == null
 							|| "".equals(comment.getUser().getNickname()) ? "游客"
@@ -232,8 +233,7 @@ public class SnsCommentAdapter extends BaseAdapter {
 						.setMaxWidth(AppContext.metrics.widthPixels * 3 / 4);
 				viewHolder.mBig.setMaxHeight(AppContext.metrics.widthPixels); 
 				//String URL=compressImage(comment.getImgUrl());
-				AppContext.imageLoader.displayImage(comment.getImgUrl(),
-						viewHolder.mBig, AppContext.gallery);
+				viewHolder.mBig.setImageURI(Uri.parse(comment.getImgUrl()));
 //				viewHolder.mBig.setOnClickListener(new OnClickListener() {
 //					@Override
 //					public void onClick(View v) {
@@ -251,8 +251,7 @@ public class SnsCommentAdapter extends BaseAdapter {
 				viewHolder.mBig.setVisibility(View.GONE);
 				viewHolder.ll_mjk.setVisibility(View.VISIBLE);
 				viewHolder.tv_mjk.setText(comment.getTitle());
-				AppContext.imageLoader.displayImage(comment.getImgUrl(),
-						viewHolder.iv_mjk, AppContext.gallery);
+				viewHolder.iv_mjk.setImageURI(Uri.parse(comment.getImgUrl()));
 //				viewHolder.ll_mjk.setOnClickListener(new OnClickListener() {
 //					@Override
 //					public void onClick(View v) {
@@ -372,12 +371,12 @@ public class SnsCommentAdapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		ImageView iv_photo;
+		SimpleDraweeView iv_photo;
 		TextView tv_nickname;
 		EmoticonsTextViewnew tv_content;
 		TextView tv_time, time;
 		LinearLayout ll_mjk;
-		ImageView iv_mjk;
+		SimpleDraweeView iv_mjk;
 		TextView tv_mjk;
 		// 二层回复列表
 		NoScrollListView mCommentList;

@@ -2,7 +2,6 @@ package com.sicao.smartwine;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,11 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.sicao.smartwine.libs.DeviceDiscoveryManager;
 import com.sicao.smartwine.libs.DeviceUtil;
 import com.sicao.smartwine.shop.entity.ShareEntity;
@@ -37,8 +32,6 @@ public class AppContext extends LifeApplication {
     private static AppContext  instance;
     // 酒柜部分
     private DeviceDiscoveryManager manager;
-    //图片加载库
-    public static ImageLoader imageLoader = ImageLoader.getInstance();
     //手机分辨率参数
     /** 窗口管理 **/
     private WindowManager mManager = null;
@@ -59,38 +52,9 @@ public class AppContext extends LifeApplication {
         DeviceUtil.loadConfigType(getApplicationContext(), R.xml.types);
         manager = new DeviceDiscoveryManager(getApplicationContext());
         manager.startDiscovery();
-        initImageLoader(this);
+        //faceBook图片加载库
+        Fresco.initialize(this);
     }
-
-    /**
-     * 初始化ImageLoader
-     *
-     * @param context
-     */
-    private static void initImageLoader(Context context) {
-
-        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(
-                context);
-        config.memoryCacheSize(25 * 1024 * 1024);
-        config.threadPriority(Thread.NORM_PRIORITY - 2);
-        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
-        // 5个线程下载
-        config.threadPoolSize(5);
-        config.tasksProcessingOrder(QueueProcessingType.FIFO);
-        imageLoader.init(config.build());
-    }
-
-    /**
-     * 轮播图页
-     */
-    public static DisplayImageOptions gallery = new DisplayImageOptions.Builder()
-            .cacheInMemory(true).cacheOnDisk(true)
-            .showImageOnLoading(R.drawable.ic_launcher)
-            .showImageForEmptyUri(R.drawable.ic_launcher)
-            .bitmapConfig(Bitmap.Config.RGB_565)
-            .showImageOnFail(R.drawable.ic_launcher)
-            .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
-
     /**
      * 判断网络是否可用
      *

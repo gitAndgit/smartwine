@@ -2,16 +2,17 @@ package com.sicao.smartwine.party.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.party.PartyDetailActivity;
@@ -78,7 +79,7 @@ public class PartyListAdapter extends BaseAdapter {
             convertView = View.inflate(context, R.layout.talent_party_list_item,
                     null);
             viewHolder = new ViewHolder();
-            viewHolder.iv_pic = (ImageView) convertView
+            viewHolder.iv_pic = (SimpleDraweeView) convertView
                     .findViewById(R.id.iv_pic);
             viewHolder.tv_title = (TextView) convertView
                     .findViewById(R.id.tv_title);
@@ -113,8 +114,7 @@ public class PartyListAdapter extends BaseAdapter {
         } else {
             viewHolder.tv_text_status.setVisibility(View.GONE);
         }
-        AppContext.imageLoader.displayImage(sns.getApp_cover(),
-                viewHolder.iv_pic, AppContext.gallery);
+        viewHolder.iv_pic.setImageURI(Uri.parse(sns.getApp_cover()));
         if (sns.isEnd()) {
             viewHolder.state.setText("已结束");
         } else {
@@ -146,7 +146,7 @@ public class PartyListAdapter extends BaseAdapter {
     }
 
     class ViewHolder {
-        ImageView iv_pic;
+        SimpleDraweeView iv_pic;
         TextView tv_title;
         TextView tv_time;
         TextView tv_address;

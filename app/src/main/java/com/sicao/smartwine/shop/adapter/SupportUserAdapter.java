@@ -2,16 +2,16 @@ package com.sicao.smartwine.shop.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.sicao.smartwine.AppContext;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.shop.entity.User;
-import com.sicao.smartwine.widget.CircleImageView;
 
 import java.util.ArrayList;
 
@@ -73,7 +73,7 @@ public class SupportUserAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			convertView = this.mInflater.inflate(R.layout.support_user_item,
 					null);
-			holder.icon = (CircleImageView) convertView
+			holder.icon = (SimpleDraweeView) convertView
 					.findViewById(R.id.circleImageView1);
 			convertView.setTag(holder);
 		} else {
@@ -92,13 +92,6 @@ public class SupportUserAdapter extends BaseAdapter {
 			} else if (mList.size() >= 9 && position == 8) {
 				// 最后一个，点击展开
 				holder.icon.setImageResource(R.drawable.dynamic_icon);
-				if (mAllSupport.length() > 3) {
-					// 大于1000取0~倒数第三位的数字作为K(千)的单位
-					holder.icon.setmContent(mAllSupport.substring(0, mAllSupport.length()-3) + "k+");
-				} else {
-					// 小与1000
-					holder.icon.setmContent(mAllSupport + "");
-				}
 				holder.icon.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -110,8 +103,7 @@ public class SupportUserAdapter extends BaseAdapter {
 			}
 
 		} else {
-			AppContext.imageLoader.displayImage(user.getAvatar(), holder.icon,
-					AppContext.gallery);
+			holder.icon.setImageURI(Uri.parse(user.getAvatar()));
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -126,7 +118,7 @@ public class SupportUserAdapter extends BaseAdapter {
 	}
 
 	class ViewHolder {
-		CircleImageView icon;
+		SimpleDraweeView icon;
 	}
 
 	private OpenListener openListener;

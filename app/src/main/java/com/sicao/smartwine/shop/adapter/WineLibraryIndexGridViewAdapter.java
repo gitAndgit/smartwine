@@ -2,15 +2,16 @@ package com.sicao.smartwine.shop.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.shop.entity.WineLibraryEntity;
@@ -76,7 +77,7 @@ public class WineLibraryIndexGridViewAdapter extends BaseAdapter {
 					R.layout.wine_library_index_list_gridview_item, null);
 			holder.name = (TextView) convertView.findViewById(R.id.textView1);
 			holder.desc = (TextView) convertView.findViewById(R.id.textView2);
-			holder.icon = (ImageView) convertView.findViewById(R.id.imageView1);
+			holder.icon = (SimpleDraweeView) convertView.findViewById(R.id.imageView1);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -92,7 +93,7 @@ public class WineLibraryIndexGridViewAdapter extends BaseAdapter {
 			holder.desc.setText(entity.getDescription());
 		}
 		if (!"".equals(entity.getPath())) {
-			AppContext.imageLoader.displayImage(entity.getPath(), holder.icon,AppContext.gallery);
+			holder.icon.setImageURI(Uri.parse(entity.getPath()));
 		}
 		convertView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -108,7 +109,7 @@ public class WineLibraryIndexGridViewAdapter extends BaseAdapter {
 
 	class ViewHolder {
 		TextView name, desc;
-		ImageView icon;
+		SimpleDraweeView icon;
 	}
 
 	public interface ItemClickListener {

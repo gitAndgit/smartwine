@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.util.UserInfoUtil;
-import com.sicao.smartwine.widget.CircleImageView;
 
 public abstract class BaseActivity extends AppCompatActivity {
     //内容容器参数配置
@@ -17,7 +17,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     //内容容器
     protected FrameLayout content;
     //Toolbar右侧图标
-    protected CircleImageView rightIcon;
+    protected SimpleDraweeView rightIcon;
     //Toolbar左侧图标
     protected ImageView leftIcon;
     //当前设备ID
@@ -33,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         content = (FrameLayout) findViewById(R.id.content);
         title = (TextView) findViewById(R.id.toolbar_title);
         title.setText(setTitle() == null ? getString(R.string.app_name) : setTitle());
-        rightIcon = (CircleImageView) findViewById(R.id.view);
+        rightIcon = (SimpleDraweeView) findViewById(R.id.view);
         RelativeLayout.LayoutParams rightParams = new RelativeLayout.LayoutParams(55,55);
         rightParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         rightParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);

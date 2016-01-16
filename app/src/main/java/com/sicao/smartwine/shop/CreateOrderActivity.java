@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -60,7 +63,7 @@ public class CreateOrderActivity extends BaseActivity {
     // 商品简介
     private WineEntity wine;
     // 商品图片控件
-    private ImageView mGood;
+    private SimpleDraweeView mGood;
     // 商品名称，价格和简介控件
     private TextView mGoodName, mMealDesc;
     // 套餐类型
@@ -145,7 +148,7 @@ public class CreateOrderActivity extends BaseActivity {
         mName = (TextView) findViewById(R.id.name);
         mAddressText = (TextView) findViewById(R.id.address);
         mAddAddress = (TextView) findViewById(R.id.address_text);
-        mGood = (ImageView) findViewById(R.id.imageView1);
+        mGood = (SimpleDraweeView) findViewById(R.id.imageView1);
         mMealDesc = (TextView) findViewById(R.id.textView2);
         mGoodName = (TextView) findViewById(R.id.textView1);
         mFuck = (EditText) findViewById(R.id.editText1);
@@ -239,8 +242,7 @@ public class CreateOrderActivity extends BaseActivity {
         allMoney.setText("￥" + money);
         allmoney = Double.parseDouble(StringUtil.double2(money * joinNumber));
 
-        AppContext.imageLoader.displayImage(wine.getWineImg(), mGood,
-                AppContext.gallery);
+        mGood.setImageURI(Uri.parse(wine.getWineImg()));
         // 支付宝
         mAlipayManager = new AlipayManager(this);
         // 微信支付

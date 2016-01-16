@@ -191,7 +191,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".user.FeedBackActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".user.UserInfoActivity"></activity>
     </application>
 
 </manifest>

@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
@@ -128,7 +129,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
     // 品酒活动创建人的昵称
     TextView tv_nickname;
     // 品酒活动创建者的头像
-    ImageView iv_photo;
+    SimpleDraweeView iv_photo;
     // 品酒活动标题
     TextView tv_topic_title;
     // 关注按钮
@@ -226,8 +227,8 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                         tv_topic_title.setText(topicDetail.getTitle());
                         tv_nickname
                                 .setText(topicDetail.getUser().getNickname());
-                        AppContext.imageLoader.displayImage(topicDetail.getUser()
-                                .getAvatar(), iv_photo, AppContext.gallery);
+                        iv_photo.setImageURI(Uri.parse(topicDetail.getUser()
+                                .getAvatar()));
                     }
                     tv_time.setText(topicDetail.getAddtime());
                     // 增加酒款
@@ -249,7 +250,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                                                     .inflate(
                                                             R.layout.freedrink_info_wine_info,
                                                             null);
-                                            ImageView iv_mycellarimage = (ImageView) wineview
+                                            SimpleDraweeView iv_mycellarimage = (SimpleDraweeView) wineview
                                                     .findViewById(R.id.iv_mycellarimage);// 图片
                                             TextView tv_mywinename = (TextView) wineview
                                                     .findViewById(R.id.tv_mywinename);// 名字
@@ -258,10 +259,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                                             final MyWine m = (MyWine) object;
                                             if (m.getImage() != null
                                                     && !m.getImage().equals("")) {
-                                                AppContext.imageLoader.displayImage(
-                                                        m.getImage(),
-                                                        iv_mycellarimage,
-                                                        AppContext.gallery);
+                                                iv_mycellarimage.setImageURI(Uri.parse(m.getImage()));
                                             }
                                             if (m.getPrice() != null
                                                     && !m.getPrice().equals("")) {
@@ -342,7 +340,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                 R.layout.party_headview_xml, null);
         headView.setVisibility(View.GONE);
         webView = (WebView) headView.findViewById(R.id.webView);
-        iv_photo = (ImageView) headView.findViewById(R.id.iv_photo);
+        iv_photo = (SimpleDraweeView) headView.findViewById(R.id.iv_photo);
         tv_nickname = (TextView) headView.findViewById(R.id.tv_nickname);
         tv_time = (TextView) headView.findViewById(R.id.tv_time);
         tv_topic_title = (TextView) headView.findViewById(R.id.tv_topic_title);
@@ -1111,7 +1109,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
         for (int i = 0; i < size; i++) {
             View wineview = LayoutInflater.from(PartyDetailActivity.this)
                     .inflate(R.layout.freedrink_info_wine_info, null);
-            ImageView iv_mycellarimage = (ImageView) wineview
+            SimpleDraweeView iv_mycellarimage = (SimpleDraweeView) wineview
                     .findViewById(R.id.iv_mycellarimage);// 图片
             TextView tv_mywinename = (TextView) wineview
                     .findViewById(R.id.tv_mywinename);// 名字
@@ -1119,8 +1117,7 @@ public class PartyDetailActivity extends BaseActivity implements View.OnClickLis
                     .findViewById(R.id.textView1);// 价格
             final MyWine m = topicDetail.getList().get(i);
             if (m.getImage() != null && !m.getImage().equals("")) {
-                AppContext.imageLoader.displayImage(m.getImage(),
-                        iv_mycellarimage, AppContext.gallery);
+                iv_mycellarimage.setImageURI(Uri.parse(m.getImage()));
             }
             if (m.getPrice() != null && !m.getPrice().equals("")) {
                 textView1.setText(m.getPrice());

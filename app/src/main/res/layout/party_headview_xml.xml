@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -16,14 +17,14 @@
         android:paddingTop="6dp"
         android:visibility="visible">
 
-        <com.sicao.smartwine.widget.CircleImageView xmlns:circle="http://schemas.android.com/apk/res/com.sicao.smartwine"
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_photo"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            fresco:roundAsCircle="true"
+            fresco:placeholderImage="@drawable/ic_launcher"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_launcher"
-            circle:border_color="@color/photo_border_color"
-            circle:border_width="@dimen/photo_border_width" />
+             />
 
         <LinearLayout
             android:layout_width="wrap_content"

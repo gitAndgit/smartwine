@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/write"
     android:clickable="true"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" >
     <ImageView
         android:layout_width="match_parent"
@@ -21,16 +22,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <com.sicao.smartwine.widget.CircleImageView
-                xmlns:circle="http://schemas.android.com/apk/res/com.sicao.smartwine"
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/iv_photo"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_launcher"
-                circle:border_color="@color/photo_border_color"
-                circle:border_width="@dimen/photo_border_width" />
+                fresco:roundAsCircle="true"
+                fresco:placeholderImage="@drawable/ic_launcher"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -129,12 +129,13 @@
             android:gravity="center_vertical"
             android:visibility="gone" >
 
-            <ImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/iv_mjk"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_margin="5dp"
-                android:src="@drawable/ic_launcher" />
+                fresco:placeholderImage="@drawable/ic_launcher"
+                 />
 
             <TextView
                 android:id="@+id/tv_mjk"
@@ -151,7 +152,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:scaleType="fitXY"
-            android:src="@drawable/abc_list_focused_holo"
             android:visibility="gone" />
 
         <com.sicao.smartwine.widget.NoScrollListView

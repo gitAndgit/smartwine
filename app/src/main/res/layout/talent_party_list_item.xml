@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:background="@color/write"
     android:orientation="vertical" >
 
@@ -18,13 +19,12 @@
             android:layout_centerVertical="true"
             android:layout_margin="15dp" >
 
-            <ImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/iv_pic"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center_vertical"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher" />
+                fresco:placeholderImage="@drawable/ic_launcher" />
 
             <LinearLayout
                 android:id="@+id/party_statue"

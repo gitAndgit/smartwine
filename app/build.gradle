@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
 android {
     compileSdkVersion 'Google Inc.:Google APIs:22'
     buildToolsVersion "23.0.2"
@@ -28,7 +34,6 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.1'
     compile files('libs/gson-2.2.1.jar')
     compile files('libs/SMSSDK-1.1.7.jar')
-    compile files('libs/universal-image-loader-1.9.4.jar')
     compile files('libs/jsoup-1.7.2.jar')
     compile files('libs/qiniu-android-sdk-7.0.7.2.jar')
     compile files('libs/happy-dns-0.2.1.jar')
@@ -37,4 +42,5 @@ dependencies {
     compile files('libs/alipaysdk.jar')
     compile files('libs/libammsdk.jar')
     compile project(':life-platform-release')
+    compile 'com.facebook.fresco:fresco:0.5.0+'
 }

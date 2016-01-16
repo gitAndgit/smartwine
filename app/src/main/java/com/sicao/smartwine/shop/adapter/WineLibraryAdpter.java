@@ -2,16 +2,16 @@ package com.sicao.smartwine.shop.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.sicao.smartwine.AppContext;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.shop.entity.WineEntity;
 
@@ -55,7 +55,7 @@ public class WineLibraryAdpter extends BaseAdapter {
         if (null == convertView) {
             mView = new HoldView();
             convertView = mInflater.inflate(R.layout.wine_library_list, null);
-            mView.iv_mycellarimage = (ImageView) convertView
+            mView.iv_mycellarimage = (SimpleDraweeView) convertView
                     .findViewById(R.id.iv_mycellarimage);
             mView.tv_mywinename = (TextView) convertView
                     .findViewById(R.id.tv_mywinename);
@@ -68,8 +68,7 @@ public class WineLibraryAdpter extends BaseAdapter {
         }
         final WineEntity entity = mlist.get(position);
         if (null != entity.getWineImg() && !entity.getWineImg().equals("")) {
-            AppContext.imageLoader.displayImage(entity.getWineImg(),
-                    mView.iv_mycellarimage, AppContext.gallery);
+            mView.iv_mycellarimage.setImageURI(Uri.parse(entity.getWineImg()));
         } else {
             mView.iv_mycellarimage.setImageResource(R.drawable.ic_launcher);
         }
@@ -86,7 +85,7 @@ public class WineLibraryAdpter extends BaseAdapter {
 
     // 口袋类
     class HoldView {
-        ImageView iv_mycellarimage;
+        SimpleDraweeView iv_mycellarimage;
         TextView tv_mywinename, textView1;// 酒名 酒的价格
         RelativeLayout rr_jiondetails;
     }
