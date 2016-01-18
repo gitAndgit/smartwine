@@ -27,6 +27,7 @@ import com.sicao.smartwine.libs.WineCabinetService;
 import com.sicao.smartwine.party.PartyListActivity;
 import com.sicao.smartwine.shop.IndexActivity;
 import com.sicao.smartwine.user.FeedBackActivity;
+import com.sicao.smartwine.user.UserInfoActivity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.UserInfoUtil;
@@ -112,6 +113,13 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             @Override
             public void error(String error) {
 
+            }
+        });
+        //头像点击事件
+        rightIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DeviceInfoActivity.this, UserInfoActivity.class));
             }
         });
         //登录到智捷通

@@ -2,23 +2,29 @@ package com.sicao.smartwine.user;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
-import com.sicao.smartwine.shop.entity.UserProfile;
+import com.sicao.smartwine.api.ApiClient;
+import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.user.entity.DateTimePickDialogUtil;
+import com.sicao.smartwine.util.ApiCallBack;
+import com.sicao.smartwine.util.ApiException;
+import com.sicao.smartwine.util.StringUtil;
 import com.sicao.smartwine.util.UploadFileUtil;
 import com.sicao.smartwine.util.UserInfoUtil;
-import com.sicao.smartwine.widget.CircleImageView;
 import com.sicao.smartwine.widget.CropImage;
 
 import org.json.JSONException;
@@ -41,11 +47,11 @@ public class UserInfoActivity extends BaseActivity {
     /**
      * 头像
      */
-    CircleImageView mAvatar;
+    SimpleDraweeView mAvatar;
     /***
      * 个人信息实体类
      */
-    UserProfile mUserEntity;
+    PtjUserEntity mUserEntity;
     /**
      * 头像上传是文件地址
      */
@@ -55,6 +61,7 @@ public class UserInfoActivity extends BaseActivity {
 
     String initStartDateTime = "1990年9月3日 "; // 初始化开始时间
     String initEndDateTime = "1980年1月1日 "; // 初始化结束时间
+
     @Override
     public String setTitle() {
         return getString(R.string.title_activity_user_userinfo_info);
@@ -103,7 +110,7 @@ public class UserInfoActivity extends BaseActivity {
         getUserInfo();
         getMyDefaultAddress();
         boolean is_received = UserInfoUtil.getMsgON(this);
-		/*
+        /*
 		 * 设置推送开关
 		 */
         if (is_received) {
@@ -125,6 +132,7 @@ public class UserInfoActivity extends BaseActivity {
             }
         });
     }
+
     /**
      * 控件初始化
      */
@@ -135,11 +143,12 @@ public class UserInfoActivity extends BaseActivity {
         mSex = (TextView) findViewById(R.id.sex);
         mSign = (TextView) findViewById(R.id.sign);
         mAddress = (TextView) findViewById(R.id.address);
-        mAvatar = (CircleImageView) findViewById(R.id.avatar);
+        mAvatar = (SimpleDraweeView) findViewById(R.id.avatar);
         mPhone = (TextView) findViewById(R.id.user_phone);
         rr_bing_phone = (RelativeLayout) findViewById(R.id.rr_bing_phone);
         cb_notify = (ImageView) findViewById(R.id.cb_notify);
     }
+
     /***
      * 控件的点击事件
      *
@@ -241,39 +250,40 @@ public class UserInfoActivity extends BaseActivity {
      * 获取用户信息
      */
     public void getUserInfo() {
-//        ApiClient.getUserInfo(this, UserInfoUtil.getToken(this),
-//                UserInfoUtil.getUID(this), new ApiCallBack() {
-//                    @Override
-//                    public void response(Object object) {
-//                        mUserEntity = (UserProfile) object;
-//                        // 显示用户信息
-//                        mNickname.setText(mUserEntity.getNickname());
-//                        mSign.setText(TextUtils.isEmpty(mUserEntity
-//                                .getSignature()) ? "\"这个人很懒，什么也没说\""
-//                                : mUserEntity.getSignature());
-//                        UIHelper.imageLoader.displayImage(
-//                                mUserEntity.getAvatar(), mAvatar,
-//                                UIHelper.photoption);
-//                        if ("".equals(StringUtil.patternPhoneNum(mUserEntity
-//                                .getMobile()))) {
-//                            // 手机号等于空时
-//                            mPhone.setClickable(true);
-//                            mPhone.setText("未绑定");
-//                        } else {
-//                            // 手机号不等于空 设置手机号
-//                            mPhone.setClickable(false);
-//                            rr_bing_phone.setClickable(false);
-//                            mPhone.setText(StringUtil
-//                                    .patternPhoneNum(mUserEntity.getMobile()));
-//                        }
-//                        if (mUserEntity.getSex().equals("f")) {
-//                            mSex.setText("女");
-//                        } else {
-//                            mSex.setText("男");
-//                        }
-//                        mBirthday.setText(mUserEntity.getBirthday());
-//                    }
-//                }, null);
+        ApiClient.getUserInfo(this, UserInfoUtil.getUID(this), UserInfoUtil.getToken(this), new ApiCallBack() {
+            @Override
+            public void response(Object object) {
+                mUserEntity = (PtjUserEntity) object;
+                // 显示用户信息
+                mNickname.setText(mUserEntity.getNickname());
+                mSign.setText(TextUtils.isEmpty(mUserEntity
+                        .getSignature()) ? "\"这个人很懒，什么也没说\""
+                        : mUserEntity.getSignature());
+                mAvatar.setImageURI(Uri.parse(mUserEntity.getAvatar()));
+                if ("".equals(StringUtil.patternPhoneNum(mUserEntity
+                        .getMobile()))) {
+                    // 手机号等于空时
+                    mPhone.setClickable(true);
+                    mPhone.setText("未绑定");
+                } else {
+                    // 手机号不等于空 设置手机号
+                    mPhone.setClickable(false);
+                    rr_bing_phone.setClickable(false);
+                    mPhone.setText(StringUtil
+                            .patternPhoneNum(mUserEntity.getMobile()));
+                }
+                if (mUserEntity.getSex().equals("f")) {
+                    mSex.setText("女");
+                } else {
+                    mSex.setText("男");
+                }
+                mBirthday.setText(mUserEntity.getBirthday());
+            }
+        }, new ApiException() {
+            @Override
+            public void error(String error) {
+            }
+        });
     }
 
     /***
@@ -387,7 +397,6 @@ public class UserInfoActivity extends BaseActivity {
 
     /***
      * 获取默认地址
-     *
      */
     private void getMyDefaultAddress() {
 //        RequestQueue queue = ApiClient.getVolley(this);
@@ -439,5 +448,5 @@ public class UserInfoActivity extends BaseActivity {
 //        };
 //        queue.add(request);
 //    }
-}
+    }
 }
