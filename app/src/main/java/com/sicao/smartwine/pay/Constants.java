@@ -36,5 +36,23 @@ public class Constants {
 	 * 用户反馈
 	 */
     public static final int FEED_BACK_USER = 1;
+    /*
+     * 添加地址
+     *
+     */
+    public static final int ADD_USER_ADDRESS = 10096;
+    /*
+     *地址栏没有地址的时候跳转的添加地址的请求码
+     */
+    public static final int TO_ADD_ADDRESS = 10106;
+
+    /*
+     *删除地址信息id广播
+     */
+    public static final String CANCLE_ADDRESS_ID = "CANCLE_ADDRESS_ID";
+    /*
+     *如果收货地址是单一的
+     */
+    public static final String SINGLE_ADDRESS = "SINGLE_ADDRESS";
 
 }

@@ -195,7 +195,11 @@
         <activity
             android:name=".user.UserInfoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".user.AddressListActivity"></activity>
+        <activity android:name=".user.AddressListActivity" />
+        <activity
+            android:name=".party.ScrollingActivity"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

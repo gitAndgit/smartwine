@@ -1723,5 +1723,134 @@ public class ApiClient {
         });
     }
 
+    /***
+     * 获取我的地址列表信息
+     *
+     * @param context   上下文对象
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void getAddressList(Context context,
+                                      final ApiListCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/getAddress?userToken=" + UserInfoUtil.getToken(context);
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int k, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject objec = new JSONObject(new String(bytes));
+                    if (status(objec)) {
+                        ArrayList<Address> list = new ArrayList<Address>();
+                        JSONObject info = objec.getJSONObject("info");
+                        JSONArray array = info.getJSONArray("list");
+                        for (int i = 0; i < array.length(); i++) {
+                            Address add = new Address();
+                            JSONObject address = array.getJSONObject(i);
+                            add.setAddress(address.getString("address"));
+                            add.setPhone(address.getString("tel"));
+                            add.setName(address.getString("realName"));
+                            add.setId(address.getString("id"));
+                            String defaults = address.getString("default");
+                            if ("1".equals(defaults)) {
+                                add.setIsdefault(true);
+                            } else {
+                                add.setIsdefault(false);
+                            }
+                            list.add(add);
+                        }
+                        if (null != callBack) {
+                            callBack.response(list);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 根据某一个地址的地址ID删除某一个地址
+     *
+     * @param context   上下文对象
+     * @param id        地址ID
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void deleteAddressByID(Context context, String id,
+                                         final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/deleteAddress?userToken=" + UserInfoUtil.getToken(context) + "&id=" + id;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject objec = new JSONObject(new String(bytes));
+                    if (status(objec)) {
+                        if (null != callBack) {
+                            callBack.response(true);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
+
+    /***
+     * 设置某一个地址为yoghurt的默认地址
+     *
+     * @param context   上下文对象
+     * @param id        地址ID
+     * @param callBack  接口执行OK回调对象
+     * @param exception 接口执行失败回调对象
+     */
+    public static void defaultConfigAddress(Context context, String id,
+                                            final ApiCallBack callBack, final ApiException exception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        String url = URL + "App/setDefaultAddress?userToken=" + UserInfoUtil.getToken(context)
+                + "&id=" + id;
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (status(object)) {
+                        if (null != callBack) {
+                            callBack.response(true);
+                        }
+                    }
+                    return;
+
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                if (null != exception) {
+                    exception.error(new String(bytes));
+                }
+                return;
+            }
+        });
+    }
 }

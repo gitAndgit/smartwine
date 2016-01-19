@@ -5,4 +5,36 @@
     android:layout_height="match_parent"
     tools:context="com.sicao.smartwine.user.AddressListActivity">
 
+    <com.sicao.smartwine.widget.P2RefreshListView
+        android:id="@+id/address_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null" />
+
+    <LinearLayout
+        android:id="@+id/address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:text="暂时还没有收货地址哦" />
+
+        <TextView
+            android:id="@+id/add_address_btn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="添加"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 </RelativeLayout>

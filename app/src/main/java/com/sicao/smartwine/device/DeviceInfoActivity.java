@@ -25,6 +25,7 @@ import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.WineCabinetMetaData;
 import com.sicao.smartwine.libs.WineCabinetService;
 import com.sicao.smartwine.party.PartyListActivity;
+import com.sicao.smartwine.party.ScrollingActivity;
 import com.sicao.smartwine.shop.IndexActivity;
 import com.sicao.smartwine.user.FeedBackActivity;
 import com.sicao.smartwine.user.UserInfoActivity;
@@ -309,7 +310,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 startActivity(new Intent(this, PartyListActivity.class));
                 break;
             case R.id.tiXing://美酒提醒
-                Toast.makeText(DeviceInfoActivity.this, "美酒提醒", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, ScrollingActivity.class));
                 break;
             case R.id.yijian://意见反馈
                 startActivity(new Intent(this, FeedBackActivity.class));
