@@ -193,6 +193,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                     mWorkModel_1.setText(entity
                                             .getWork_model_name());
                                     // 酒柜的温度跟后台设置的模式温度不一致,此处以服务器为准
+
                                     if (null != mCabinet
                                             && mCabinet.getTemp() != Integer.parseInt(entity
                                             .getWork_model_demp())) {
@@ -210,6 +211,8 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
 
     /***
      * 监控设备行信息的变化
+     *
+     *
      */
     private ContentObserver mContentObservera = new ContentObserver(
             new Handler()) {
@@ -286,21 +289,29 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.imageView3://酒柜灯开关
                 if (LifeClient.getConnectionId() != -1 && !"".equals(mDeviceID)) {
-                    if (null != mCabinet) {
-                        if (mCabinet.isLight()) {
-                            Toast.makeText(DeviceInfoActivity.this, "正在关闭设备灯", Toast.LENGTH_LONG).show();
-                            mCabinet.setLight(false);
-                        } else {
-                            Toast.makeText(DeviceInfoActivity.this, "正在启动设备灯", Toast.LENGTH_LONG).show();
-                            mCabinet.setLight(true);
+                    Cursor c = getContentResolver().query(mCabinetUri, null, null, null,
+                            null);
+                    if (c.moveToFirst()) {
+                        light = c.getInt(c.getColumnIndex(WineCabinetMetaData.LIGHT)) == 1;
+                        if (null != mCabinet) {
+                            if (light) {
+                                Toast.makeText(DeviceInfoActivity.this, "正在关闭设备灯", Toast.LENGTH_LONG).show();
+                                mCabinet.setLight(false);
+                            } else {
+                                Toast.makeText(DeviceInfoActivity.this, "正在启动设备灯", Toast.LENGTH_LONG).show();
+                                mCabinet.setLight(true);
+                            }
+                            mCabinet.update();
                         }
-                        mCabinet.update();
                     }
+                    c.close();
                 }
                 break;
             case R.id.setting_connect://设置连接
-                if (LifeClient.getConnectionId() != -1) {
-                    startActivityForResult(new Intent(this, ConfigActivity.class).putExtra("connectid", LifeClient.getConnectionId()), 10089);
+                if (null != mDevice) {
+                    startActivityForResult(new Intent(this, DeviceListActivity.class), 10090);
+                } else if (LifeClient.getConnectionId() != -1) {
+                    startActivityForResult(new Intent(this, ConfigActivity.class), 10089);
                 }
                 break;
             case R.id.wineShop://美酒商城
@@ -349,7 +360,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                 }
                             }, null);
                 }
-            } else if (requestCode == 10089) {//配置新设备
+            } else if (requestCode == 10089||requestCode == 10090) {//配置新设备或者用户从设备列表选取了新设备
                 final String jid = data.getExtras().getString("new_device_id");
                 //获取设备列表,取设备ID相同的设备信息
                 LifeClient.getDeviceList(DeviceInfoActivity.this, new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
@@ -361,6 +372,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                         ArrayList<Device> mList = (ArrayList<Device>) list;
                         for (Device device : mList) {
                             if (jid.equals(device.getJid())) {
+                                mDevice=device;
                                 selectDevice(device);
                             }
                         }
@@ -426,7 +438,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         Cursor c = getContentResolver().query(mCabinetUri, null, null, null,
                 null);
         wineLight.setVisibility(View.VISIBLE);
-        if (c.moveToFirst()) {
+        if (c.moveToNext()) {
             boolean on = c.getInt(c.getColumnIndex(WineCabinetMetaData.ON)) == 1;
             if (on) {
                 mIsonline.setText("正常");

@@ -42,8 +42,6 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
     boolean passwordShow = false;
     // WIFI 信息
     ScanResult wifi;
-    // 链接的ID
-    int mConnectID = -1;
 
     @Override
     public String setTitle() {
@@ -58,7 +56,6 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mConnectID = getIntent().getExtras().getInt("connectid");
         leftIcon.setVisibility(View.GONE);
         SSID = (TextView) findViewById(R.id.editText1);
         password = (EditText) findViewById(R.id.editText2);
@@ -140,12 +137,12 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                                 final Device d = mlist.get(0);
                                 Log.i("huahua", "发现设备列表----" + d.toString());
                                 if (null != wifi) {
-                                    if (-1 != mConnectID) {
-                                        Log.i("huahua", "发现设备列表--连接ID--" + mConnectID);
+                                    if (-1 != LifeClient.getConnectionId()) {
+                                        Log.i("huahua", "发现设备列表--连接ID--" + LifeClient.getConnectionId());
                                         LifeClient
                                                 .addDevice(
                                                         getApplicationContext(),
-                                                        mConnectID,
+                                                        LifeClient.getConnectionId(),
                                                         d,
                                                         "新朝智能酒柜",
                                                         new com.sicao.smartwine.api.LifeClient.ApiCallBack() {
@@ -176,7 +173,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                                                         });
                                     }
                                 }
-
+                                UserInfoUtil.saveDeviceID(ConfigActivity.this,d.getJid());
                                 // 关闭页面，进入设备列表页面
                                 Intent intent = new Intent();
                                 intent.putExtra("new_device_id", d.getJid());

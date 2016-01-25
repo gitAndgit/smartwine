@@ -32,6 +32,7 @@ import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.ApiListAndObjectCallBack;
 import com.sicao.smartwine.util.ApiListCallBack;
+import com.sicao.smartwine.util.AppManager;
 import com.sicao.smartwine.util.MD5;
 import com.sicao.smartwine.util.UserInfoUtil;
 
@@ -343,8 +344,14 @@ public class ApiClient {
                             }
                             return;
                         }
-                    } else {
-                        Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException exception) {
                     Log.i("ApiClient", "sicao-" + exception.getMessage());
@@ -386,7 +393,13 @@ public class ApiClient {
                         }
                         return;
                     } else {
-                        Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException exception) {
                     Log.i("ApiClient", "sicao-" + exception.getMessage());
@@ -432,7 +445,13 @@ public class ApiClient {
                         }
                         return;
                     } else {
-                        Toast.makeText(context, object.getString("info"), Toast.LENGTH_SHORT).show();
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException exception) {
                     Log.i("ApiClient", "sicao-" + exception.getMessage());
@@ -512,9 +531,13 @@ public class ApiClient {
                         }
                         return;
                     } else {
-                        Log.e("putaoji",
-                                "wine list error:"
-                                        + object.getString("info"));
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -572,6 +595,14 @@ public class ApiClient {
                             callBack.response(list);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -619,6 +650,13 @@ public class ApiClient {
                             callback.response(entity);
                         }
                     } else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -645,7 +683,7 @@ public class ApiClient {
      * @param callBack  执行OK回调对象
      * @param exception 执行失败回调对象
      */
-    public static void getCommentList(Context context, String topic_id, int page,
+    public static void getCommentList(final Context context, String topic_id, int page,
                                       int row, final ApiListCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/listDealComment?userToken="
@@ -721,6 +759,13 @@ public class ApiClient {
                             callBack.response(list);
                         }
                     } else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -772,7 +817,7 @@ public class ApiClient {
      * @param callback
      * @param exception
      */
-    public static void getPartyList(Context context, int cType, int page, int mark,
+    public static void getPartyList(final Context context, int cType, int page, int mark,
                                     final ApiListCallBack callback,
                                     final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
@@ -804,6 +849,14 @@ public class ApiClient {
                             callback.response(list);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -903,12 +956,12 @@ public class ApiClient {
                             callback.response(topicDetail);
                         }
                     } else {
-                        if (null != exception) {
-                            exception.error(object.getString("info"));
-                        } else {
-                            Log.e("ApiClient",
-                                    "huodong info error:"
-                                            + object.getString("info"));
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
                     }
                 } catch (Exception e) {
@@ -964,6 +1017,13 @@ public class ApiClient {
                             callback.response(wine);
                         }
                     } else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -989,7 +1049,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getPartyJoinUsers(Context context, String partyID, int page, int row,
+    public static void getPartyJoinUsers(final Context context, String partyID, int page, int row,
                                          final ApiListAndObjectCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getTopicSignList?topic_id=" + partyID
@@ -1022,6 +1082,14 @@ public class ApiClient {
                             callBack.response(list, number);
                         }
                         return;
+                    }else {
+                        if ("401".equals(objec.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                 }
@@ -1047,7 +1115,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void ThumbsUp(Context context, String sourceID, String type, boolean ThumbsUp,
+    public static void ThumbsUp(final Context context, String sourceID, String type, final boolean ThumbsUp,
                                 final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = "";
@@ -1065,9 +1133,18 @@ public class ApiClient {
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
+                    Log.i("huahua","点赞--"+ThumbsUp+"结果---"+new String(bytes));
                     if (status(object)) {
                         if (null != callBack) {
                             callBack.response(true);
+                        }
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                             //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
                         }
                     }
                     return;
@@ -1096,7 +1173,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getPartyDetailComments(Context context, String partyID, int page, int row, final int maxComment,
+    public static void getPartyDetailComments(final Context context, String partyID, int page, int row, final int maxComment,
                                               final ApiListCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/listPost?userToken="
@@ -1169,6 +1246,14 @@ public class ApiClient {
                             callBack.response(list);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                 }
@@ -1197,7 +1282,7 @@ public class ApiClient {
      * @param callBack   执行OK回调对象
      * @param exception  执行失败回调对象
      */
-    public static void sendCommentFromPartyDetail(Context context, String partyID, String pid, String type,
+    public static void sendCommentFromPartyDetail(final Context context, String partyID, String pid, String type,
                                                   String attach_ids, String img_paths, String content,
                                                   final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
@@ -1218,6 +1303,14 @@ public class ApiClient {
                     if (status(object)) {
                         if (null != callBack) {
                             callBack.response(true);
+                        }
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
                     }
                     return;
@@ -1244,7 +1337,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void deleteComment(Context context, final String commentID,
+    public static void deleteComment(final Context context, final String commentID,
                                      final String type, final ApiCallBack callBack,
                                      final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
@@ -1262,6 +1355,14 @@ public class ApiClient {
                             callBack.response(true);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                     return;
                 } catch (Exception e) {
@@ -1286,7 +1387,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getOrderDetail(Context context, String orderID,
+    public static void getOrderDetail(final Context context, String orderID,
                                       final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getMyOrderDetail?userToken="
@@ -1326,11 +1427,14 @@ public class ApiClient {
                         // 3，设置规格信息
                         entity.setMeal(meal);
                         // 4，底部显示要支付的金额
-                    } else {
-                        if (null != exception) {
-                            exception.error(object.getString("info") + "");
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
-                        return;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1357,7 +1461,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void checkSign(Context context, String orderID, String sign, final String payType,
+    public static void checkSign(final Context context, String orderID, String sign, final String payType,
                                  final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/verfityAndReturnOrderId?userToken="
@@ -1382,6 +1486,14 @@ public class ApiClient {
                             callBack.response(entity);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1410,7 +1522,7 @@ public class ApiClient {
      * @param callBack
      * @param exception
      */
-    public static void createTemporarySignUp(Context context, String row_id, String tel,
+    public static void createTemporarySignUp(final Context context, String row_id, String tel,
                                              String sign_num, String price, final String name,
                                              final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
@@ -1448,6 +1560,14 @@ public class ApiClient {
                             callBack.response(entity);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                 }
@@ -1472,7 +1592,7 @@ public class ApiClient {
      * @param callBack
      * @param exception
      */
-    public static void makesurePaySuccess(Context context, String enroid, String ordernumber,
+    public static void makesurePaySuccess(final Context context, String enroid, String ordernumber,
                                           final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/enrollStatus?enroid=" + enroid
@@ -1487,6 +1607,14 @@ public class ApiClient {
                             callBack.response(true);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1517,7 +1645,7 @@ public class ApiClient {
      * @param callBack     接口执行OK回调的对象
      * @param exception    接口执行失败回调的对象
      */
-    public static void sendCommentForShop(Context context, String deal_id, String content,
+    public static void sendCommentForShop(final Context context, String deal_id, String content,
                                           String attach_ids, String type, String pid,
                                           String star, String bitmap_paths, final ApiCallBack callBack,
                                           final ApiException exception) {
@@ -1541,6 +1669,14 @@ public class ApiClient {
                             callBack.response(true);
                         }
                         return;
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                 }
@@ -1563,7 +1699,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getDefaultAddress(Context context, final ApiCallBack callBack, final ApiException exception) {
+    public static void getDefaultAddress(final Context context, final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getDefaultAddress?userToken=" + UserInfoUtil.getToken(context);
         httpClient.get(url, new AsyncHttpResponseHandler() {
@@ -1585,6 +1721,14 @@ public class ApiClient {
                         }
                         if (null != callBack) {
                             callBack.response(entity);
+                        }
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
                     }
                 } catch (Exception e) {
@@ -1609,7 +1753,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getOrderInfo(Context context, String orderID, final ApiCallBack callBack, final ApiException exception) {
+    public static void getOrderInfo(final Context context, String orderID, final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getMyOrderDetail?userToken=" + UserInfoUtil.getToken(context) + "&order_id=" + orderID;
         httpClient.get(url, new AsyncHttpResponseHandler() {
@@ -1651,6 +1795,14 @@ public class ApiClient {
                         }
                         return;
 
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                 }
@@ -1700,11 +1852,12 @@ public class ApiClient {
                             callback.response(object);
                         }
                     } else {
-                        if (null != exception) {
-                            exception.error(object.getString("info"));
-                        } else {
-                            Log.e("putaoji", "topic reback error :"
-                                    + object.getString("info"));
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
                     }
                 } catch (JSONException e) {
@@ -1730,7 +1883,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void getAddressList(Context context,
+    public static void getAddressList(final Context context,
                                       final ApiListCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/getAddress?userToken=" + UserInfoUtil.getToken(context);
@@ -1761,6 +1914,14 @@ public class ApiClient {
                         if (null != callBack) {
                             callBack.response(list);
                         }
+                    }else {
+                        if ("401".equals(objec.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1786,7 +1947,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void deleteAddressByID(Context context, String id,
+    public static void deleteAddressByID(final Context context, String id,
                                          final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/deleteAddress?userToken=" + UserInfoUtil.getToken(context) + "&id=" + id;
@@ -1798,6 +1959,14 @@ public class ApiClient {
                     if (status(objec)) {
                         if (null != callBack) {
                             callBack.response(true);
+                        }
+                    }else {
+                        if ("401".equals(objec.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
                     }
                 } catch (JSONException e) {
@@ -1823,7 +1992,7 @@ public class ApiClient {
      * @param callBack  接口执行OK回调对象
      * @param exception 接口执行失败回调对象
      */
-    public static void defaultConfigAddress(Context context, String id,
+    public static void defaultConfigAddress(final Context context, String id,
                                             final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
         String url = URL + "App/setDefaultAddress?userToken=" + UserInfoUtil.getToken(context)
@@ -1836,6 +2005,14 @@ public class ApiClient {
                     if (status(object)) {
                         if (null != callBack) {
                             callBack.response(true);
+                        }
+                    }else {
+                        if ("401".equals(object.getString("error_code"))) {
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context,false);
+                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
+                            return;
                         }
                     }
                     return;

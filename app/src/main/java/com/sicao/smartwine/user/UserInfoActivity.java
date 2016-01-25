@@ -186,6 +186,7 @@ public class UserInfoActivity extends BaseActivity {
 //                        Constants.UPDATE_USER_SIGN);
                 break;
             case R.id.address:// 地址
+                startActivity(new Intent(this,AddressListActivity.class));
 //                startActivityForResult(new Intent(this, MyAddressActivity.class),
 //                        Constants.REVISE_ADDRESS);
                 break;
