@@ -154,8 +154,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         getContentResolver().unregisterContentObserver(mContentObservera);
         // 设备后台编号
         mDeviceID = mDevice.getJid();
-        Log.i("huahua", "UDID=" + mDevice.getUDID());
-
         setDeviceID(mDeviceID);
         // 设备名称
         String name = mDevice.getName();
@@ -192,14 +190,13 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                 if (null != mCabinet && null != entity && !"".equals(entity.getWork_model_name())) {
                                     mWorkModel_1.setText(entity
                                             .getWork_model_name());
-                                    // 酒柜的温度跟后台设置的模式温度不一致,此处以服务器为准
-
+                                    // 酒柜的温度跟后台设置的模式温度不一致,此处以需以酒柜服务器为准，即将设备的工作模式修改为手动模式,并调整该模式的温度(调整葡萄集服务器)
                                     if (null != mCabinet
                                             && mCabinet.getTemp() != Integer.parseInt(entity
                                             .getWork_model_demp())) {
-                                        mCabinet.setTemp(Integer.parseInt(entity
-                                                .getWork_model_demp()));
-                                        mCabinet.update();
+                                        Log.i("huahua", "real--" + mCabinet.getRealTemp() + "---temp--" + mCabinet.getTemp() + "---model--" + entity.getWork_model_demp());
+                                        ApiClient.configWorkMode(DeviceInfoActivity.this, UserInfoUtil.getUID(DeviceInfoActivity.this),
+                                                mDeviceID, "手动", mCabinet.getTemp() + "", "update", null, null);
                                     }
                                 }
                             } catch (Exception e) {
@@ -211,8 +208,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
 
     /***
      * 监控设备行信息的变化
-     *
-     *
      */
     private ContentObserver mContentObservera = new ContentObserver(
             new Handler()) {
@@ -245,6 +240,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                     for (Device device : mList) {
                                         if (getDeviceID().equals(device.getJid())) {
                                             mDevice = device;
+
                                             selectDevice(mDevice);
                                         }
                                         continue;
@@ -268,23 +264,20 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             case R.id.textView13://酒柜设置
                 if (LifeClient.getConnectionId() != -1 && !"".equals(mDeviceID)) {
                     String smartWineMode = "";
-                    String smartModeTemp = "";
                     if (null == entity) {
                         smartWineMode = "";
-                        smartModeTemp = "";
                     } else {
                         if (null == entity.getWork_model_name()) {
                             smartWineMode = "";
-                            smartModeTemp = "";
                         } else {
                             smartWineMode = entity.getWork_model_name();
-                            smartModeTemp = entity.getWork_model_demp();
                         }
                     }
                     startActivityForResult(new Intent(this, SmartSetActivity.class).
                             putExtra("smartWineName", mDevice.getName()).
                             putExtra("smartWineMode", smartWineMode).
-                            putExtra("smartModeTemp", smartModeTemp), 10088);
+                            putExtra("smartModeTemp", realTemp + "").
+                            putExtra("CURRENT_DEVICE_ID", mDevice.getJid()), 10088);
                 }
                 break;
             case R.id.imageView3://酒柜灯开关
@@ -346,13 +339,13 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                         if (null != mCabinet && null != entity && !"".equals(entity.getWork_model_name())) {
                                             mWorkModel_1.setText(entity
                                                     .getWork_model_name());
-                                            // 酒柜的温度跟后台设置的模式温度不一致,此处以服务器为准
+                                            // 酒柜的温度跟后台设置的模式温度不一致,此处以需以酒柜服务器为准，即将设备的工作模式修改为手动模式,并调整该模式的温度(调整葡萄集服务器)
                                             if (null != mCabinet
                                                     && mCabinet.getTemp() != Integer.parseInt(entity
                                                     .getWork_model_demp())) {
-                                                mCabinet.setTemp(Integer.parseInt(entity
-                                                        .getWork_model_demp()));
-                                                mCabinet.update();
+                                                Log.i("huahua", "real--" + mCabinet.getRealTemp() + "---temp--" + mCabinet.getTemp() + "---model--" + entity.getWork_model_demp());
+                                                ApiClient.configWorkMode(DeviceInfoActivity.this, UserInfoUtil.getUID(DeviceInfoActivity.this),
+                                                        mDeviceID, "手动", mCabinet.getTemp() + "", "update", null, null);
                                             }
                                         }
                                     } catch (Exception e) {
@@ -360,7 +353,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                 }
                             }, null);
                 }
-            } else if (requestCode == 10089||requestCode == 10090) {//配置新设备或者用户从设备列表选取了新设备
+            } else if (requestCode == 10089 || requestCode == 10090) {//配置新设备或者用户从设备列表选取了新设备
                 final String jid = data.getExtras().getString("new_device_id");
                 //获取设备列表,取设备ID相同的设备信息
                 LifeClient.getDeviceList(DeviceInfoActivity.this, new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {
@@ -372,7 +365,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                         ArrayList<Device> mList = (ArrayList<Device>) list;
                         for (Device device : mList) {
                             if (jid.equals(device.getJid())) {
-                                mDevice=device;
+                                mDevice = device;
                                 selectDevice(device);
                             }
                         }
@@ -431,6 +424,8 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         }
     }
 
+    int realTemp = 0;
+
     /**
      * 更新UI
      */
@@ -451,6 +446,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             } else {
                 wineLight.setImageResource(R.drawable.light_icon_close);
             }
+            realTemp = c.getInt(c.getColumnIndex(WineCabinetMetaData.TEMP));
             mRealTemp.setText(c.getInt(c.getColumnIndex(WineCabinetMetaData.REAL_TEMP))
                     + "℃");
             setTemp = c.getInt(c.getColumnIndex(WineCabinetMetaData.TEMP));

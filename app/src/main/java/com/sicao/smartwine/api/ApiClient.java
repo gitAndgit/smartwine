@@ -297,6 +297,7 @@ public class ApiClient {
         });
     }
 
+
     /***
      * 配置设备的工作模式(葡萄集)
      *
@@ -331,6 +332,7 @@ public class ApiClient {
                         if ("insert".equals(action) || "update".equals(action)) {
                             //插入/更新
                             if (null != callback) {
+
                                 callback.response(true);
                             }
                         } else if ("select".equals(action)) {
@@ -344,12 +346,12 @@ public class ApiClient {
                             }
                             return;
                         }
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -362,6 +364,7 @@ public class ApiClient {
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 if (null != exception) {
                     exception.error(new String(bytes));
+
                 }
                 return;
             }
@@ -377,6 +380,7 @@ public class ApiClient {
      * @param callBack  执行OK回调对象
      * @param exception 执行失败回调对象
      */
+
     public static void getUserInfo(final Context context, final String uid, final String token,
                                    final ApiCallBack callBack, final ApiException exception) {
         AsyncHttpClient httpClient = getHttpClient();
@@ -395,9 +399,9 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -447,9 +451,9 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -533,9 +537,9 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -595,11 +599,11 @@ public class ApiClient {
                             callBack.response(list);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -652,9 +656,9 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -761,9 +765,9 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -849,11 +853,11 @@ public class ApiClient {
                             callback.response(list);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -958,8 +962,8 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1019,9 +1023,9 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -1082,11 +1086,11 @@ public class ApiClient {
                             callBack.response(list, number);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(objec.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1133,17 +1137,17 @@ public class ApiClient {
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
                 try {
                     JSONObject object = new JSONObject(new String(bytes));
-                    Log.i("huahua","点赞--"+ThumbsUp+"结果---"+new String(bytes));
+                    Log.i("huahua", "点赞--" + ThumbsUp + "结果---" + new String(bytes));
                     if (status(object)) {
                         if (null != callBack) {
                             callBack.response(true);
                         }
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
-                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            //退出账号，重启应用
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -1246,11 +1250,11 @@ public class ApiClient {
                             callBack.response(list);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1304,11 +1308,11 @@ public class ApiClient {
                         if (null != callBack) {
                             callBack.response(true);
                         }
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1355,11 +1359,11 @@ public class ApiClient {
                             callBack.response(true);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1427,11 +1431,11 @@ public class ApiClient {
                         // 3，设置规格信息
                         entity.setMeal(meal);
                         // 4，底部显示要支付的金额
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1486,11 +1490,11 @@ public class ApiClient {
                             callBack.response(entity);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1560,12 +1564,12 @@ public class ApiClient {
                             callBack.response(entity);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -1607,11 +1611,11 @@ public class ApiClient {
                             callBack.response(true);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1669,11 +1673,11 @@ public class ApiClient {
                             callBack.response(true);
                         }
                         return;
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1722,11 +1726,11 @@ public class ApiClient {
                         if (null != callBack) {
                             callBack.response(entity);
                         }
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1795,12 +1799,12 @@ public class ApiClient {
                         }
                         return;
 
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
-                            AppManager.startApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
+                            AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
                     }
@@ -1854,8 +1858,8 @@ public class ApiClient {
                     } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1914,11 +1918,11 @@ public class ApiClient {
                         if (null != callBack) {
                             callBack.response(list);
                         }
-                    }else {
+                    } else {
                         if ("401".equals(objec.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -1960,11 +1964,11 @@ public class ApiClient {
                         if (null != callBack) {
                             callBack.response(true);
                         }
-                    }else {
+                    } else {
                         if ("401".equals(objec.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
@@ -2006,11 +2010,11 @@ public class ApiClient {
                         if (null != callBack) {
                             callBack.response(true);
                         }
-                    }else {
+                    } else {
                         if ("401".equals(object.getString("error_code"))) {
                             //退出账号，重启应用
-                            UserInfoUtil.setLogin(context,false);
-                            AppManager.stopApp(AppManager.getPackageName(context),context);
+                            UserInfoUtil.setLogin(context, false);
+                            AppManager.stopApp(AppManager.getPackageName(context), context);
                             AppManager.startApp(AppManager.getPackageName(context), context);
                             return;
                         }
