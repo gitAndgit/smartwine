@@ -168,7 +168,8 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
                         mCabinet.update();
                         ApiClient.configWorkMode(SmartSetActivity.this, UserInfoUtil.getUID(SmartSetActivity.this),
                                 mDeviceID, mWorkName.getText().toString().trim(),
-                                mWorkTemp.getText().toString().trim(), "update", new ApiCallBack() {
+                                mWorkTemp.getText().toString().trim(), "update",
+                                new ApiCallBack() {
                                     @Override
                                     public void response(Object object) {
                                         setResult(RESULT_OK);

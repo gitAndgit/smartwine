@@ -1,5 +1,6 @@
 package com.sicao.smartwine.device;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.wifi.ScanResult;
@@ -42,6 +43,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
     boolean passwordShow = false;
     // WIFI 信息
     ScanResult wifi;
+    ProgressDialog progressDialog;
 
     @Override
     public String setTitle() {
@@ -69,6 +71,8 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
         //
         getContentResolver().registerContentObserver(
                 DeviceMetaData.FIND_CONTENT_URI, true, mContentObserver);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("正在配置设备...");
     }
 
     @Override
@@ -85,6 +89,9 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                 if (null != wifi && !TextUtils.isEmpty(SSID.getText().toString().trim()) &&
                         !"SSID:".equals(SSID.getText().toString().trim()) &&
                         !TextUtils.isEmpty(password.getText().toString().trim())) {
+                    if (!progressDialog.isShowing()){
+                        progressDialog.show();
+                    }
                     //执行WIFI配置
                     LifeClient.configWIFIToDevice(getApplicationContext(),
                             wifi.SSID, password.getText().toString()
@@ -125,6 +132,9 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
             new Handler()) {
         @Override
         public void onChange(boolean selfChange) {
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
             // 1,获取发现列表里面的数据
             LifeClient.getNativeConfigDeviceList(getApplicationContext(),
                     new com.sicao.smartwine.api.LifeClient.ApiListCallBack() {

@@ -81,7 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setDeviceID(String mDeviceID) {
         this.mDeviceID = mDeviceID;
-        UserInfoUtil.saveDeviceID(this, mDeviceID);
+        UserInfoUtil.saveDeviceID(this, this.mDeviceID);
     }
 
     public String getDeviceID() {

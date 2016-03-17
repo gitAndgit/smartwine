@@ -175,6 +175,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             mCabinetUri = getContentResolver().insert(
                     WineCabinetMetaData.CONTENT_URI, values);
         }
+        Log.i("huahua", "uri----->" + mCabinetUri);
         // 监听数据库中该行数据的变化
         getContentResolver().registerContentObserver(mCabinetUri, true,
                 mContentObservera);
@@ -240,7 +241,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                                     for (Device device : mList) {
                                         if (getDeviceID().equals(device.getJid())) {
                                             mDevice = device;
-
                                             selectDevice(mDevice);
                                         }
                                         continue;
@@ -280,12 +280,14 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                             putExtra("CURRENT_DEVICE_ID", mDevice.getJid()), 10088);
                 }
                 break;
+
             case R.id.imageView3://酒柜灯开关
-                if (LifeClient.getConnectionId() != -1 && !"".equals(mDeviceID)) {
+                if (LifeClient.getConnectionId() != -1 && !"".equals(getDeviceID())) {
                     Cursor c = getContentResolver().query(mCabinetUri, null, null, null,
                             null);
-                    if (c.moveToFirst()) {
+                    if (c.moveToNext()) {
                         light = c.getInt(c.getColumnIndex(WineCabinetMetaData.LIGHT)) == 1;
+                        Log.i("huahua","酒柜灯---->"+light);
                         if (null != mCabinet) {
                             if (light) {
                                 Toast.makeText(DeviceInfoActivity.this, "正在关闭设备灯", Toast.LENGTH_LONG).show();
