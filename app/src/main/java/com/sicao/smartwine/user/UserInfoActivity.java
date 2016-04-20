@@ -37,6 +37,8 @@ import org.json.JSONObject;
  * @version 1.0.0
  */
 public class UserInfoActivity extends BaseActivity {
+
+
     Handler mHandler;
     /**
      * 昵称,性别,生日,个性签名,收货地址,手机号，未绑定手机号 我的余额
