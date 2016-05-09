@@ -147,6 +147,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     //登录智捷通
                                     //进入主页
                                     startActivity(new Intent(LoginActivity.this, DeviceInfoActivity.class));
+                                    finish();
                                     break;
                                 case 201:// 用户名不合法（用户名必须包含App前缀）
                                     break;
@@ -195,6 +196,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.textView5://立即注册
                 startActivity(new Intent(this, RegisterActivity.class));
+                finish();
                 break;
         }
     }
