@@ -2034,4 +2034,99 @@ public class ApiClient {
             }
         });
     }
+
+    //获取验证码
+    public static void getLoginCode(String phoneNumber, final ApiCallBack callBack, final ApiException exception) {
+        String url = ApiClient.URL + "App/verifyMobile?mobile=" + phoneNumber
+                + "&type=getcode";
+        AsyncHttpClient httpClient = getHttpClient();
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    if (null != callBack) {
+                        callBack.response(object);
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+            }
+        });
+    }
+
+    //登陆接口
+    public static void getLogin(String username, String password, final ApiCallBack callBack, final ApiException exception) {
+        String url = ApiClient.URL + "App/quickLogin?mobile="
+                + username + "&verifyCode=" + password;
+        AsyncHttpClient httpClient = getHttpClient();
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                try {
+                    if (null != callBack) {
+                        callBack.response(new String(bytes));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+
+            }
+        });
+    }
+
+    /**
+     * 注销操作
+     *
+     * @param context 上下文
+     *                用户标识
+     *                通知主线程更新界面
+     */
+    public static void logout(Context context) {
+        // 删除保存的用户token信息
+        UserInfoUtil.saveToken(context, "");
+        UserInfoUtil.saveUID(context, "");
+        UserInfoUtil.saveUserInfo(context, "", "");
+        UserInfoUtil.setLogin(context, false);
+    }
+
+    //get请求的通用方法
+    public static void get(String url, Context context, final ApiCallBack apiCallBack, ApiException apiexception) {
+        AsyncHttpClient httpClient = getHttpClient();
+        httpClient.get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                if (null != apiCallBack) {
+                    apiCallBack.response(new String(bytes));
+                }
+            }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+
+            }
+        });
+    }
+    //post通用请求方式
+    public static void post(String url, RequestParams params, final ApiCallBack callBack){
+        AsyncHttpClient httpClient=getHttpClient();
+        httpClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                if(null!=callBack){
+                    callBack.response(new String(bytes));
+                }
+            }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+
+            }
+        });
+    }
 }

@@ -26,6 +26,8 @@ import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.UserInfoUtil;
 
+import org.json.JSONObject;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +37,7 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends BaseActivity implements OnClickListener {
 
     // 手机号码输入框
-    AutoCompleteTextView mPhoneView;
+    EditText mPhoneView;
     //密码输入框
     EditText mPasswordView;
     //验证码输入框
@@ -68,7 +70,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         super.onCreate(savedInstanceState
         );
         // Set up the login form.
-        mPhoneView = (AutoCompleteTextView) findViewById(R.id.email);
+        mPhoneView = (EditText) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
         code = (EditText) findViewById(R.id.code);
         getCode = (TextView) findViewById(R.id.textView6);
@@ -263,32 +265,38 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                         return;
                     }
                     mPhoneView.setFocusable(false);//手机号码编辑框不可编辑
-
                     //获取验证码
-
                     ApiClient.registerGetCode(RegisterActivity.this, phone, new ApiCallBack() {
                         @Override
                         public void response(Object object) {
-                            Toast.makeText(RegisterActivity.this, "验证码已发送,请注意查收", Toast.LENGTH_SHORT).show();
-                        }
-                    }, null);
-                    loading = true;//正在倒计时
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            for (int i = 120; i >= 0; i--) {
-                                Message msg = mHandler.obtainMessage();
-                                msg.arg1 = mine;
-                                mHandler.sendMessage(msg);
-                                mine--;
-                                try {
-                                    Thread.currentThread();
-                                    Thread.sleep(1000);
-                                } catch (Exception e) {
+                            try{
+                                JSONObject json=(JSONObject)object;
+                                Toast.makeText(RegisterActivity.this, json.getString("info"), Toast.LENGTH_SHORT).show();
+                                if(json.getBoolean("status")){
+                                    loading = true;//正在倒计时
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            for (int i = 120; i >= 0; i--) {
+                                                Message msg = mHandler.obtainMessage();
+                                                msg.arg1 = mine;
+                                                mHandler.sendMessage(msg);
+                                                mine--;
+                                                try {
+                                                    Thread.currentThread();
+                                                    Thread.sleep(1000);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+                                    }.start();
                                 }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
                         }
-                    }.start();
+                    }, null);
                 }
                 break;
             case R.id.email_sign_in_button://注册按钮

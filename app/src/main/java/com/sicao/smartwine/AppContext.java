@@ -1,11 +1,13 @@
 package com.sicao.smartwine;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -17,7 +19,9 @@ import com.sicao.smartwine.shop.entity.ShareEntity;
 import com.sicao.smartwine.util.StringUtil;
 import com.smartline.life.core.LifeApplication;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import cn.sharesdk.framework.PlatformActionListener;
@@ -128,5 +132,72 @@ public class AppContext extends LifeApplication {
         if (null != listener) {
             oks.setCallback(listener);
         }
+    }
+    public void cleanApp() {
+        // 清除数据缓存
+        clearCacheFolder(getFilesDir(), System.currentTimeMillis());
+        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> infoList = am.getRunningAppProcesses();
+        long beforeMem = getAvailMemory(this);
+        Log.i("yaya", "清理前内存---->>>" + beforeMem);
+        if (infoList != null) {
+            for (int i = 0; i < infoList.size(); ++i) {
+                ActivityManager.RunningAppProcessInfo appProcessInfo = infoList.get(i);
+                // importance 该进程的重要程度 分为几个级别，数值越低就越重要。
+                // 一般数值大于RunningAppProcessInfo.IMPORTANCE_SERVICE的进程都长时间没用或者空进程了
+                // 一般数值大于RunningAppProcessInfo.IMPORTANCE_VISIBLE的进程都是非可见进程，也就是在后台运行着
+                if (appProcessInfo.importance > ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
+                    String[] pkgList = appProcessInfo.pkgList;
+                    for (int j = 0; j < pkgList.length; ++j) {// pkgList
+                        // 得到该进程下运行的包名
+                        am.killBackgroundProcesses(pkgList[j]);
+                    }
+                }
+
+            }
+        }
+
+        long afterMem = getAvailMemory(this);
+        Log.i("yaya", "清理后内存---->>>" + afterMem);
+    }
+    /**
+     * 清除缓存目录
+     *
+     * @param dir
+     *            目录
+     *            当前系统时间
+     * @return
+     */
+    public int clearCacheFolder(File dir, long curTime) {
+        int deletedFiles = 0;
+        if (dir != null && dir.isDirectory()) {
+            try {
+                for (File child : dir.listFiles()) {
+                    if (child.isDirectory()) {
+                        deletedFiles += clearCacheFolder(child, curTime);
+                    }
+                    if (child.lastModified() < curTime) {
+                        if (child.delete()) {
+                            deletedFiles++;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return deletedFiles;
+    }
+    // 获取可用内存大小
+    private long getAvailMemory(Context context) {
+        // 获取android当前可用内存大小
+        ActivityManager am = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+        am.getMemoryInfo(mi);
+        // mi.availMem; 当前系统的可用内存
+        // return Formatter.formatFileSize(context, mi.availMem);// 将获取的内存大小规格化
+        Log.i("yaya", "可用内存---->>>" + mi.availMem / (1024 * 1024));
+        return mi.availMem / (1024 * 1024);
     }
 }

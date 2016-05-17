@@ -1,8 +1,11 @@
 package com.sicao.smartwine;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -26,10 +29,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     TextView title;
     //右侧按钮
     protected TextView rightText;
+    public AppContext appContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         content = (FrameLayout) findViewById(R.id.content);
         title = (TextView) findViewById(R.id.toolbar_title);
         title.setText(setTitle() == null ? getString(R.string.app_name) : setTitle());
@@ -56,6 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         view.setLayoutParams(params);
         content.addView(view);
+        appContext=new AppContext();
     }
 
     /**
@@ -86,6 +92,24 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public String getDeviceID() {
         return UserInfoUtil.getDeviceID(this);
+    }
+    public void setStatus(boolean isStatus){//状态栏是否透明 true时状态栏透明  默认为true
+        if(isStatus){
+            findViewById(R.id.tv_status).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.tv_status).setVisibility(View.GONE);
+        }
+    }
+    public void closeInput(View view){
+        /*
+		 * 隐藏软键盘 hideSoftInputView
+		 */
+        try {
+            ((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(view.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception e) {
+        }
     }
 
 }

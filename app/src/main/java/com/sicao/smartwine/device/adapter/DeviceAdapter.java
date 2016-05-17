@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -57,18 +58,27 @@ public class DeviceAdapter extends BaseAdapter {
         if (null==convertView){
             convertView=mInflater.inflate(R.layout.device_list_item,null);
             holder=new ViewHolder();
-            holder.icon=(SimpleDraweeView)convertView.findViewById(R.id.device_icon);
+            holder.icon=(ImageView)convertView.findViewById(R.id.device_icon);
             holder.name=(TextView)convertView.findViewById(R.id.textView15);
+            holder.tv_equipment=(TextView) convertView.findViewById(R.id.tv_equipment);
+            holder.tv_again_connect=(TextView) convertView.findViewById(R.id.tv_again_connect);
             convertView.setTag(holder);
         }else{
             holder=(ViewHolder)convertView.getTag();
         }
-        Device device = mList.get(position);
-        holder.name.setText(device.getName()+"\nUDID="+device.getUDID()+"\n在线="+device.isOnline());
+        final Device device = mList.get(position);
+        holder.name.setText("设备名称："+device.getName());
+        if(device.isOnline()){
+            holder.tv_equipment.setText("当前设备");
+            holder.tv_equipment.setTextColor(mContext.getResources().getColor(R.color.baseColor));
+        }else{
+            holder.tv_equipment.setText("未选择");
+            holder.tv_equipment.setTextColor(mContext.getResources().getColor(R.color.d3d3d3d));
+        }
         return convertView;
     }
     class ViewHolder{
-        com.facebook.drawee.view.SimpleDraweeView icon;
-        TextView name;
+        ImageView icon;
+        TextView name,tv_again_connect,tv_equipment;//名字 /再次连接 /当前设备
     }
 }

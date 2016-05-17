@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sicao.smartwine.device.DeviceListActivity">
+    tools:context="com.sicao.smartwine.activity.DeviceListActivity">
 
-    <com.sicao.smartwine.widget.P2RefreshListView
+    <com.sicao.smartwine.util.SwipeMenuListView.SwipeMenuListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/view4"
         android:background="@color/write"
         android:layout_centerInParent="true" />
 </RelativeLayout>
+
