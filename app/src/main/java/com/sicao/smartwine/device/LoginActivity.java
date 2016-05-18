@@ -23,6 +23,7 @@ import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.AppManager;
+import com.sicao.smartwine.util.LToast;
 import com.sicao.smartwine.util.LToastUtil;
 import com.sicao.smartwine.util.UserInfoUtil;
 
@@ -178,6 +179,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     //登录智捷通
                                     //进入主页
                                     startActivity(new Intent(LoginActivity.this, DeviceInfoActivity.class));
+                                    finish();
                                     break;
                                 case 201:// 用户名不合法（用户名必须包含App前缀）
                                     break;
@@ -233,20 +235,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.tv_code://获取验证码
                 String mphonee=mPhoneView.getText().toString().trim();
-                ApiClient.getLoginCode(mphonee, new ApiCallBack() {
-                    @Override
-                    public void response(Object object) {
-                        try{
-                            JSONObject json=(JSONObject) object;
-                            LToastUtil.show(LoginActivity.this,json.getString("info"));
-                            if(json.getBoolean("status")){
-                                countDown();
+                if(mphonee.length()==11){
+                    ApiClient.getLoginCode(mphonee, new ApiCallBack() {
+                        @Override
+                        public void response(Object object) {
+                            try{
+                                JSONObject json=(JSONObject) object;
+                                LToastUtil.show(LoginActivity.this,json.getString("info"));
+                                if(json.getBoolean("status")){
+                                    countDown();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
-                        }catch (Exception e){
-                            e.printStackTrace();
                         }
-                    }
-                },null);
+                    },null);
+                }else{
+                    LToastUtil.show(this,"请输入正确的手机号");
+                }
+                break;
+            case R.id.textView5://立即注册
+                startActivity(new Intent(this, RegisterActivity.class));
+                finish();
                 break;
         }
     }

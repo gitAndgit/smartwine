@@ -26,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     //当前设备ID
     protected String mDeviceID = "";
     //顶部标题
-    TextView title;
+    public TextView title;
     //右侧按钮
     protected TextView rightText;
     public AppContext appContext;

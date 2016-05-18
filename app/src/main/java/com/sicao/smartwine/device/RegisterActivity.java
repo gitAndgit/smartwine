@@ -187,6 +187,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                                             //登录智捷通
                                             //进入主页
                                             startActivity(new Intent(RegisterActivity.this, DeviceInfoActivity.class));
+                                            finish();
                                             break;
                                         case 201:// 用户名不合法（用户名必须包含App前缀）
                                             break;

@@ -60,12 +60,14 @@ public class DeviceStatusActivity extends BaseActivity {
             public <T> void response(ArrayList<T> arrayList) {
                 mListData = (ArrayList<Device>) arrayList;
                 if(mListData.size()<=0){
+                    title.setText("连接失败");
                     tv_connect_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_fail));
                     tv_status.setText("连接失败");
                     tv_status_prompt.setText("请检查设备是否运行正常，指示灯是否闪烁");
                     tv_complete.setText("确定");
                     ll_status.setVisibility(View.VISIBLE);
                 }else{
+                    title.setText("连接成功");
                     tv_status.setText("连接成功");
                     tv_complete.setText("完成");
                     tv_status_prompt.setText("现在您可以使用手机控制您的设备");
