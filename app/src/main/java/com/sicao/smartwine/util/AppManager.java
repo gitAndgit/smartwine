@@ -29,6 +29,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 /***
  * <p>
@@ -635,4 +636,13 @@ public class AppManager {
             }
 	}
         }
+	//关闭当前的键盘
+	public static void closeInput_mange(Context context,View view){
+		try {
+			((InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE))
+					.hideSoftInputFromWindow(view.getWindowToken(),
+							InputMethodManager.HIDE_NOT_ALWAYS);
+		} catch (Exception e) {
+		}
+	}
 }

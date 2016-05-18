@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -28,6 +29,7 @@ import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
 import com.sicao.smartwine.api.ApiClient;
+import com.sicao.smartwine.pay.AllPay;
 import com.sicao.smartwine.pay.Constants;
 import com.sicao.smartwine.pay.OrderEntity;
 import com.sicao.smartwine.pay.alipay.AlipayManager;
@@ -122,6 +124,7 @@ public class CreateOrderActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         init();
         // 商品信息
         wine = (WineEntity) getIntent().getExtras().get("wine");
@@ -168,6 +171,7 @@ public class CreateOrderActivity extends BaseActivity {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case Constants.OPEN_ALIPAY_CLIENT:// 支付宝
+                        AllPay AllPay=new AllPay(CreateOrderActivity.this,null,2,oentity);
                         mAlipayManager.goPay(oentity, "CreateOrderAcivity");
                         break;
                     case Constants.OPEN_WX_CLIENT:// 微信
@@ -531,6 +535,7 @@ public class CreateOrderActivity extends BaseActivity {
 
     // 去支付
     public void zhifu() {
+
         if (!isXaplay) {
             // 微信支付
             // 签名验证

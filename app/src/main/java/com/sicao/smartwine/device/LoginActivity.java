@@ -2,6 +2,8 @@ package com.sicao.smartwine.device;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,7 +22,11 @@ import com.sicao.smartwine.device.entity.ZjtUserEntity;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
+import com.sicao.smartwine.util.AppManager;
+import com.sicao.smartwine.util.LToastUtil;
 import com.sicao.smartwine.util.UserInfoUtil;
+
+import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,22 +41,41 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     EditText password;
     //登录按钮
     Button login;
-    //忘记密码
-    TextView forgetPassword;
-    //立即注册
-    TextView register;
     //手机号输入框
     EditText mPhoneView;
+    TextView tv_code;
 
     @Override
     public String setTitle() {
-        return getString(R.string.app_name);
+        return "登录";
     }
 
     @Override
     public int setView() {
         return R.layout.activity_main;
     }
+    protected Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 10020:
+                    int count = msg.arg1;
+                    tv_code.setText(count + "s");
+                    // 释放控制锁
+                    if (count == 0) {
+                        tv_code.setText("重新获取验证码");
+                        tv_code.setClickable(true);
+                    }
+                    if (count == -100) {
+                        tv_code.setText("获取验证码");
+                        tv_code.setClickable(true);
+                        password.setText("");
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +96,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mPhoneView = (EditText) findViewById(R.id.editText);
         password = (EditText) findViewById(R.id.editText_pwd);
         login = (Button) findViewById(R.id.button);
-        forgetPassword = (TextView) findViewById(R.id.textView4);
-        register = (TextView) findViewById(R.id.textView5);
+        tv_code= (TextView) findViewById(R.id.tv_code);//获取验证码
+        tv_code.setOnClickListener(this);
         login.setOnClickListener(this);
-        forgetPassword.setOnClickListener(this);
-        register.setOnClickListener(this);
+        rightText.setText("注册");
+        rightText.setVisibility(View.VISIBLE);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -84,6 +109,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     return true;
                 }
                 return false;
+            }
+        });
+        rightText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
         });
     }
@@ -147,6 +178,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     //登录智捷通
                                     //进入主页
                                     startActivity(new Intent(LoginActivity.this, DeviceInfoActivity.class));
+                                    finish();
                                     break;
                                 case 201:// 用户名不合法（用户名必须包含App前缀）
                                     break;
@@ -188,13 +220,40 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         int id = view.getId();
         switch (id) {
             case R.id.button://登录
-                attemptLogin();
+                //attemptLogin();
+                final String mphone=mPhoneView.getText().toString().trim();
+                final String pw=password.getText().toString().trim();
+                if(mphone.length()==11&&pw.length()==4){
+                    getLogin(mphone,pw);
+                }else{
+                    Toast.makeText(this,"验证码或手机号错误",Toast.LENGTH_SHORT);
+                }
                 break;
             case R.id.textView4://忘记密码
                 startActivity(new Intent(this, DeviceInfoActivity.class));
                 break;
+<<<<<<< Temporary merge branch 1
             case R.id.textView5://立即注册
                 startActivity(new Intent(this, RegisterActivity.class));
+                finish();
+=======
+            case R.id.tv_code://获取验证码
+                String mphonee=mPhoneView.getText().toString().trim();
+                ApiClient.getLoginCode(mphonee, new ApiCallBack() {
+                    @Override
+                    public void response(Object object) {
+                        try{
+                            JSONObject json=(JSONObject) object;
+                            LToastUtil.show(LoginActivity.this,json.getString("info"));
+                            if(json.getBoolean("status")){
+                                countDown();
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                },null);
+>>>>>>> Temporary merge branch 2
                 break;
         }
     }
@@ -242,5 +301,76 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return false;
         }
         return true;
+    }
+    //开启线程进行60s调度
+    public void countDown() {
+        new Thread() {
+            public void run() {
+
+                int count = 60;
+
+                while (count >= 0) {
+
+                    Message msg = mHandler.obtainMessage();
+
+                    msg.what = 10020;
+
+                    msg.arg1 = count;
+
+                    mHandler.sendMessage(msg);
+
+                    count--;
+
+                    Thread.currentThread();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }.start();
+    }
+    //登陆的方法
+    public void getLogin(final String mphone,final String pw){
+        AppManager.closeInput_mange(this,login);
+        ApiClient.getLogin(mphone, pw, new ApiCallBack() {
+            @Override
+            public void response(Object object) {
+                 try {
+                     JSONObject JSONObject=new JSONObject((String) object);
+                     if (JSONObject.getBoolean("status")) {
+                         JSONObject info = JSONObject.getJSONObject("info");
+                         String token = info.getString("userToken");
+                         // 保存用户信息
+                         UserInfoUtil.saveToken(LoginActivity.this, token);
+                         // 记录用户的个人信息
+                         UserInfoUtil.saveUserInfo(LoginActivity.this, mphone,
+                                 pw);
+                         // 记录用户的登录状态
+                         UserInfoUtil.setLogin(LoginActivity.this, true);
+                         // 用户uid
+                         UserInfoUtil.saveUID(LoginActivity.this,
+                                 info.getString("uid"));
+                         // 记录用户帐号类型
+                         UserInfoUtil.saveUSER_TYPE(LoginActivity.this, "normal");
+                         // 默认打开消息推送的开关
+                         UserInfoUtil.setMsgON(LoginActivity.this, true);
+                         // 退出
+                         startActivity(new Intent(LoginActivity.this,DeviceInfoActivity.class));
+                         finish();
+                     }else{
+                         Toast.makeText(LoginActivity.this,JSONObject.getJSONObject("info")+"",Toast.LENGTH_SHORT);
+                     }
+                 }catch (Exception e){
+                     e.printStackTrace();
+                 }
+            }
+        }, new ApiException() {
+            @Override
+            public void error(String error) {
+                Toast.makeText(LoginActivity.this,"登陆错误，请重试",Toast.LENGTH_SHORT);
+            }
+        });
     }
 }

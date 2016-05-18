@@ -104,6 +104,10 @@
         <activity
             android:name=".party.PartyDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!-- 设置界面-->
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- 图片剪切类 -->
         <activity
@@ -203,8 +207,19 @@
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".device.DeviceListActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".device.DeviceStatusActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.DeviceListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!-- 更改手机号-->
+        <activity
+            android:name=".activity.ChangePhone"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!-- 服务与隐私条约-->
+        <activity
+            android:name=".activity.ServiceAndPrivacyActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

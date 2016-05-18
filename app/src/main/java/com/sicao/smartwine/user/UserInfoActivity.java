@@ -1,5 +1,6 @@
 package com.sicao.smartwine.user;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -17,11 +18,13 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.sicao.smartwine.AppContext;
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
+import com.sicao.smartwine.activity.ChangePhone;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.user.entity.DateTimePickDialogUtil;
 import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.util.ApiException;
+import com.sicao.smartwine.util.LToastUtil;
 import com.sicao.smartwine.util.StringUtil;
 import com.sicao.smartwine.util.UploadFileUtil;
 import com.sicao.smartwine.util.UserInfoUtil;
@@ -37,11 +40,13 @@ import org.json.JSONObject;
  * @version 1.0.0
  */
 public class UserInfoActivity extends BaseActivity {
+
+
     Handler mHandler;
     /**
      * 昵称,性别,生日,个性签名,收货地址,手机号，未绑定手机号 我的余额
      */
-    TextView mNickname, mSex, mBirthday, mSign, mAddress, mPhone, Amount;
+    TextView mNickname, mSex, mBirthday, mSign, mAddress, mPhone, Amount,tv_change;//更改手机号
     RelativeLayout rr_bing_phone;
     ImageView cb_notify;
     /**
@@ -58,6 +63,7 @@ public class UserInfoActivity extends BaseActivity {
     String mImagePath = "";
     TextView startDateTime; // 开始时间
     DateTimePickDialogUtil dateTimePicKDialog;
+    ProgressDialog progressDialog;
 
     String initStartDateTime = "1990年9月3日 "; // 初始化开始时间
     String initEndDateTime = "1980年1月1日 "; // 初始化结束时间
@@ -107,6 +113,7 @@ public class UserInfoActivity extends BaseActivity {
                 }
             }
         };
+        progressDialog=new ProgressDialog(this);
         getUserInfo();
         getMyDefaultAddress();
         boolean is_received = UserInfoUtil.getMsgON(this);
@@ -145,6 +152,7 @@ public class UserInfoActivity extends BaseActivity {
         mAddress = (TextView) findViewById(R.id.address);
         mAvatar = (SimpleDraweeView) findViewById(R.id.avatar);
         mPhone = (TextView) findViewById(R.id.user_phone);
+        tv_change=(TextView)findViewById(R.id.tv_change);//更改手机号
         rr_bing_phone = (RelativeLayout) findViewById(R.id.rr_bing_phone);
         cb_notify = (ImageView) findViewById(R.id.cb_notify);
     }
@@ -186,6 +194,7 @@ public class UserInfoActivity extends BaseActivity {
 //                        Constants.UPDATE_USER_SIGN);
                 break;
             case R.id.address:// 地址
+                LToastUtil.show(this,"正在开发");
                 startActivity(new Intent(this,AddressListActivity.class));
 //                startActivityForResult(new Intent(this, MyAddressActivity.class),
 //                        Constants.REVISE_ADDRESS);
@@ -200,13 +209,17 @@ public class UserInfoActivity extends BaseActivity {
 //                this.startActivityForResult(intentPhoto,
 //                        Constants.OPEN_OR_CREATE_PICTURE);
                 break;
-            case R.id.user_phone:// 绑定手机号
+            case R.id.tv_change:// 绑定手机号
             case R.id.rr_bing_phone:
-//                startActivityForResult(new Intent(this, BingPhone.class),
-//                        Constants.BIND_PHONE);
+                startActivityForResult(new Intent(this, ChangePhone.class),
+                        10086);
+
                 break;
             case R.id.Amount:// 跳到我的余额
 //                startActivity(new Intent(UserActivity.this, MyRemaining.class));
+                break;
+            case R.id.tv_change_password:
+                LToastUtil.show(this,"正在开发");
                 break;
         }
     }
@@ -243,6 +256,12 @@ public class UserInfoActivity extends BaseActivity {
 //            } else if (requestCode == Constants.REVISE_ADDRESS) {
 //                mAddress.setText(data.getExtras().getString("add"));
 //            }
+            if(requestCode==10086){
+                String phone=data.getExtras().getString("bindPhone");
+                mPhone.setText(StringUtil
+                        .patternPhoneNum(phone));
+
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -279,10 +298,12 @@ public class UserInfoActivity extends BaseActivity {
                     mSex.setText("男");
                 }
                 mBirthday.setText(mUserEntity.getBirthday());
+                progressDialog.dismiss();
             }
         }, new ApiException() {
             @Override
             public void error(String error) {
+                progressDialog.dismiss();
             }
         });
     }

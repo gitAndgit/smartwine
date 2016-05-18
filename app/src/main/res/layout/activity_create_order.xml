@@ -188,7 +188,8 @@
                     android:layout_centerVertical="true"
                     android:layout_margin="10dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/ic_launcher" />
+                    fresco:placeholderImage="@drawable/ic_launcher"
+                    ></com.facebook.drawee.view.SimpleDraweeView>
 
                 <TextView
                     android:id="@+id/textView1"

@@ -292,9 +292,9 @@ public class SmartSetActivity extends BaseActivity implements View.OnClickListen
         mDeviceID = getIntent().getExtras().getString("CURRENT_DEVICE_ID");
         mCabinet = new WineCabinetService(mDeviceID, LifeClient.getConnection());
         //右侧重置按钮
-        rightIcon.setVisibility(View.VISIBLE);
-        rightIcon.setImageResource(R.drawable.ic_launcher);
-        rightIcon.setOnClickListener(this);
+//        rightIcon.setVisibility(View.VISIBLE);
+//        rightIcon.setImageResource(R.drawable.ic_launcher);
+//        rightIcon.setOnClickListener(this);
         //
         smartWineName = getIntent().getExtras().getString("smartWineName");
         wineName.setText(smartWineName);

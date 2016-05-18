@@ -1,11 +1,17 @@
 package com.sicao.smartwine.device;
 
+import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,20 +23,17 @@ import android.widget.Toast;
 
 import com.sicao.smartwine.BaseActivity;
 import com.sicao.smartwine.R;
+import com.sicao.smartwine.activity.DeviceListActivity;
+import com.sicao.smartwine.activity.SettingsActivity;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.api.LifeClient;
 import com.sicao.smartwine.device.entity.ModelEntity;
-import com.sicao.smartwine.device.entity.PtjUserEntity;
 import com.sicao.smartwine.libs.DeviceMetaData;
 import com.sicao.smartwine.libs.WineCabinetMetaData;
 import com.sicao.smartwine.libs.WineCabinetService;
-import com.sicao.smartwine.party.PartyListActivity;
-import com.sicao.smartwine.party.ScrollingActivity;
 import com.sicao.smartwine.shop.IndexActivity;
-import com.sicao.smartwine.user.FeedBackActivity;
 import com.sicao.smartwine.user.UserInfoActivity;
 import com.sicao.smartwine.util.ApiCallBack;
-import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.UserInfoUtil;
 import com.smartline.life.device.Device;
 
@@ -48,10 +51,6 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
     RelativeLayout settingConnect;
     //美酒商城
     RelativeLayout wineShop;
-    //品酒行动
-    RelativeLayout drinkWine;
-    //美酒提醒
-    RelativeLayout tiXing;
     //意见反馈
     RelativeLayout yijian;
     // 酒柜内温度,工作模式,设置温度,连接状态,设备名称,酒柜电灯是否已经打开,工作模式.
@@ -80,9 +79,10 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStatus(true);
         leftIcon.setVisibility(View.GONE);
         //右侧头像
-        rightIcon.setVisibility(View.VISIBLE);
+        //rightIcon.setVisibility(View.VISIBLE);
         //
         wineSetting = (TextView) findViewById(R.id.textView13);
         wineSetting.setOnClickListener(this);
@@ -92,12 +92,12 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         settingConnect.setOnClickListener(this);
         wineShop = (RelativeLayout) findViewById(R.id.wineShop);
         wineShop.setOnClickListener(this);
-        drinkWine = (RelativeLayout) findViewById(R.id.drinkWine);
-        drinkWine.setOnClickListener(this);
-        tiXing = (RelativeLayout) findViewById(R.id.tiXing);
-        tiXing.setOnClickListener(this);
-        yijian = (RelativeLayout) findViewById(R.id.yijian);
-        yijian.setOnClickListener(this);
+        findViewById(R.id.setting).setOnClickListener(this);
+        findViewById(R.id.my_message).setOnClickListener(this);
+        findViewById(R.id.find).setOnClickListener(this);//发现
+        findViewById(R.id.my_wines).setOnClickListener(this);
+        findViewById(R.id.management_order).setOnClickListener(this);
+
         //
         mIsonline = (TextView) findViewById(R.id.online);
         mRealTemp = (TextView) findViewById(R.id.textView11);
@@ -105,7 +105,7 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
         //
         mWorkModel_1 = (TextView) findViewById(R.id.wine_mode);
         //获取用户信息
-        ApiClient.getUserInfo(this, UserInfoUtil.getUID(this), UserInfoUtil.getToken(this), new ApiCallBack() {
+       /* ApiClient.getUserInfo(this, UserInfoUtil.getUID(this), UserInfoUtil.getToken(this), new ApiCallBack() {
             @Override
             public void response(Object object) {
                 rightIcon.setImageURI(Uri.parse(((PtjUserEntity) object).getAvatar()));
@@ -122,23 +122,25 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             public void onClick(View v) {
                 startActivity(new Intent(DeviceInfoActivity.this, UserInfoActivity.class));
             }
-        });
+        });*/
         //登录到智捷通
-        LifeClient.login(DeviceInfoActivity.this, getString(R.string.xmpp_host), getResources().getInteger(R.integer.xmpp_port),
-                getString(R.string.service), getString(R.string.source), "sicao-" + UserInfoUtil.getUID(this),
-                "sicao12345678", new com.sicao.smartwine.api.LifeClient.ApiCallBack() {
-                    @Override
-                    public void response(Object object) {
-                        Log.i("huahua", "智捷通登录OK-----");
-                        UserInfoUtil.setLogin(DeviceInfoActivity.this, true);
-                    }
-                }, new com.sicao.smartwine.api.LifeClient.ApiException() {
-                    @Override
-                    public void error(String error) {
-                        Log.i("huahua", "智捷通登录失败-----" + error);
-                        Toast.makeText(DeviceInfoActivity.this, error + "", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        if(UserInfoUtil.getLogin(this)){
+            LifeClient.login(DeviceInfoActivity.this, getString(R.string.xmpp_host), getResources().getInteger(R.integer.xmpp_port),
+                    getString(R.string.service), getString(R.string.source), "sicao-" + UserInfoUtil.getUID(this),
+                    "sicao12345678", new com.sicao.smartwine.api.LifeClient.ApiCallBack() {
+                        @Override
+                        public void response(Object object) {
+                            Log.i("huahua", "智捷通登录OK-----");
+                            UserInfoUtil.setLogin(DeviceInfoActivity.this, true);
+                        }
+                    }, new com.sicao.smartwine.api.LifeClient.ApiException() {
+                        @Override
+                        public void error(String error) {
+                            Log.i("huahua", "智捷通登录失败-----" + error);
+                            Toast.makeText(DeviceInfoActivity.this, error + "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
         // 监听数据库中设备列表的数据变化
         getContentResolver().registerContentObserver(
                 DeviceMetaData.CONTENT_URI, true,
@@ -303,24 +305,60 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.setting_connect://设置连接
-                if (null != mDevice) {
-                    startActivityForResult(new Intent(this, DeviceListActivity.class), 10090);
-                } else if (LifeClient.getConnectionId() != -1) {
-                    startActivityForResult(new Intent(this, ConfigActivity.class), 10089);
+                //如果wifi没有连接
+                if(getWifistatus()){
+                    if (null != mDevice) {
+                        startActivityForResult(new Intent(this, DeviceListActivity.class), 10090);
+                    } else if (LifeClient.getConnectionId() != -1) {
+                        WifiManager wifi= (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                        String wifiName=wifi.getConnectionInfo().getSSID();
+                        startActivityForResult(new Intent(this, ConfigActivity.class).putExtra("wifiName",wifiName), 10089);
+                    }
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("提示");
+                    builder.setMessage("请求打开wifi");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            WifiManager wifi= (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                            wifi.setWifiEnabled(true);
+                            dialog.dismiss();;
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();;
+                        }
+                    });
+                    builder.create().show();;
                 }
                 break;
             case R.id.wineShop://美酒商城
                 startActivity(new Intent(this, IndexActivity.class));
                 break;
-            case R.id.drinkWine://品酒行动
-                startActivity(new Intent(this, PartyListActivity.class));
+            case R.id.setting://设置
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.tiXing://美酒提醒
+            case R.id.my_message:
+                startActivity(new Intent(DeviceInfoActivity.this, UserInfoActivity.class));
+                break;
+            case R.id.find:
+                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.management_order:
+                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.my_wines:
+                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show();
+                break;
+            /*case R.id.tiXing://美酒提醒
                 startActivity(new Intent(this, ScrollingActivity.class));
-                break;
-            case R.id.yijian://意见反馈
+                break;*/
+            /*case R.id.yijian://意见反馈
                 startActivity(new Intent(this, FeedBackActivity.class));
-                break;
+                break;*/
         }
     }
 
@@ -466,6 +504,16 @@ public class DeviceInfoActivity extends BaseActivity implements View.OnClickList
             getContentResolver().delete(mCabinetUri, null, null);
             getContentResolver().delete(DeviceMetaData.CONTENT_URI, null, null);
         } catch (Exception e) {
+        }
+    }
+    //获取wifi状态
+    protected boolean getWifistatus(){
+        ConnectivityManager manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo.State wifiStatus=manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+        if(wifiStatus == NetworkInfo.State.CONNECTED||wifiStatus== NetworkInfo.State.CONNECTING){
+            return true;
+        }else{
+            return false;
         }
     }
 }

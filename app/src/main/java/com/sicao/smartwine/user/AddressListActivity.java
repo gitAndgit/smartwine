@@ -121,6 +121,12 @@ public class AddressListActivity extends BaseActivity implements View.OnClickLis
                 finish();
             }
         });
+        rightText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               //添加收货地址信息
+            }
+        });
     }
 
     @Override
@@ -130,7 +136,7 @@ public class AddressListActivity extends BaseActivity implements View.OnClickLis
             case R.id.add_address_btn:
 
             case R.id.right_text:// 添加地址
-//                Intent intent = new Intent(this, AddAddressActivity.class);
+                  Intent intent = new Intent(this, AddAddressActivity.class);
 //                startActivityForResult(intent, Constants.ADD_USER_ADDRESS);
                 break;
         }

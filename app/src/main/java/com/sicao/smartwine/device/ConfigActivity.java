@@ -33,8 +33,6 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
     TextView SSID;
     //WIFI  password
     EditText password;
-    //pre page
-    TextView prePage;
     //next page
     TextView nextPage;
     //look  password
@@ -43,6 +41,7 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
     boolean passwordShow = false;
     // WIFI 信息
     ScanResult wifi;
+    String wifiName;
     ProgressDialog progressDialog;
 
     @Override
@@ -60,12 +59,15 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         leftIcon.setVisibility(View.GONE);
         SSID = (TextView) findViewById(R.id.editText1);
+        wifiName=getIntent().getExtras().getString("wifiName");
+        if(wifiName.contains("\"")){
+            wifiName=wifiName.substring(1,wifiName.length()-1);
+        }
+        SSID.setText(wifiName);
         password = (EditText) findViewById(R.id.editText2);
-        prePage = (TextView) findViewById(R.id.textView9);
         nextPage = (TextView) findViewById(R.id.textView10);
         lookPassword = (ImageView) findViewById(R.id.open_pwd);
-        SSID.setOnClickListener(this);
-        prePage.setOnClickListener(this);
+        SSID.setOnClickListener(this);;
         nextPage.setOnClickListener(this);
         lookPassword.setOnClickListener(this);
         //
@@ -82,9 +84,6 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
             case R.id.editText1://选择WIFI
                 startActivityForResult(new Intent(ConfigActivity.this, WlanActivity.class), 10086);
                 break;
-            case R.id.textView9://上一步
-                finish();
-                break;
             case R.id.textView10://下一步
                 if (null != wifi && !TextUtils.isEmpty(SSID.getText().toString().trim()) &&
                         !"SSID:".equals(SSID.getText().toString().trim()) &&
@@ -97,6 +96,14 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                             wifi.SSID, password.getText().toString()
                                     .trim());
 
+                } else if(!TextUtils.isEmpty(wifiName)){
+                    if (!progressDialog.isShowing()){
+                        progressDialog.show();
+                    }
+                    //执行WIFI配置
+                    LifeClient.configWIFIToDevice(getApplicationContext(),
+                            wifiName, password.getText().toString()
+                                    .trim());
                 } else {
                     Toast.makeText(ConfigActivity.this, "请正确配置当前WIFI信息", Toast.LENGTH_SHORT).show();
                 }
@@ -106,10 +113,12 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                     password
                             .setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                     passwordShow = true;
+                    lookPassword.setImageDrawable(getResources().getDrawable(R.drawable.ic_viewed_white));
                 } else {
                     password.setInputType(InputType.TYPE_CLASS_TEXT
                             | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     passwordShow = false;
+                    lookPassword.setImageDrawable(getResources().getDrawable(R.drawable.ic_viewed_gray));
                 }
                 break;
         }
@@ -185,12 +194,13 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                                 }
                                 UserInfoUtil.saveDeviceID(ConfigActivity.this,d.getJid());
                                 // 关闭页面，进入设备列表页面
-                                Intent intent = new Intent();
-                                intent.putExtra("new_device_id", d.getJid());
-                                setResult(RESULT_OK, intent);
+//                                Intent intent = new Intent();
+//                                intent.putExtra("new_device_id", d.getJid());
+//                                setResult(RESULT_OK, intent);
+//                                finish();
+                                startActivity(new Intent(ConfigActivity.this,DeviceStatusActivity.class));
                                 finish();
                             }
-
                         }
                     }, new com.sicao.smartwine.api.LifeClient.ApiException() {
                         @Override
@@ -201,7 +211,6 @@ public class ConfigActivity extends BaseActivity implements View.OnClickListener
                     });
         }
     };
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
