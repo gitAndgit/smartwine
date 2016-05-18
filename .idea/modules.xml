@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SmartWine.iml" filepath="$PROJECT_DIR$/SmartWine.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/life-platform-release/life-platform-release.iml" filepath="$PROJECT_DIR$/life-platform-release/life-platform-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smartwine.iml" filepath="$PROJECT_DIR$/smartwine.iml" />
     </modules>
   </component>
 </project>

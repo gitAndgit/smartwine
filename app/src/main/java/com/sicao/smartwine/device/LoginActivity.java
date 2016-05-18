@@ -23,7 +23,6 @@ import com.sicao.smartwine.util.ApiCallBack;
 import com.sicao.smartwine.api.ApiClient;
 import com.sicao.smartwine.util.ApiException;
 import com.sicao.smartwine.util.AppManager;
-import com.sicao.smartwine.util.LToast;
 import com.sicao.smartwine.util.LToastUtil;
 import com.sicao.smartwine.util.UserInfoUtil;
 
@@ -233,30 +232,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.textView4://忘记密码
                 startActivity(new Intent(this, DeviceInfoActivity.class));
                 break;
-            case R.id.tv_code://获取验证码
-                String mphonee=mPhoneView.getText().toString().trim();
-                if(mphonee.length()==11){
-                    ApiClient.getLoginCode(mphonee, new ApiCallBack() {
-                        @Override
-                        public void response(Object object) {
-                            try{
-                                JSONObject json=(JSONObject) object;
-                                LToastUtil.show(LoginActivity.this,json.getString("info"));
-                                if(json.getBoolean("status")){
-                                    countDown();
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    },null);
-                }else{
-                    LToastUtil.show(this,"请输入正确的手机号");
-                }
-                break;
+<<<<<<< Temporary merge branch 1
             case R.id.textView5://立即注册
                 startActivity(new Intent(this, RegisterActivity.class));
                 finish();
+=======
+            case R.id.tv_code://获取验证码
+                String mphonee=mPhoneView.getText().toString().trim();
+                ApiClient.getLoginCode(mphonee, new ApiCallBack() {
+                    @Override
+                    public void response(Object object) {
+                        try{
+                            JSONObject json=(JSONObject) object;
+                            LToastUtil.show(LoginActivity.this,json.getString("info"));
+                            if(json.getBoolean("status")){
+                                countDown();
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                },null);
+>>>>>>> Temporary merge branch 2
                 break;
         }
     }
