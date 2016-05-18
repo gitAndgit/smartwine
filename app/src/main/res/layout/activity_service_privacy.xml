@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:text="1.您一旦注册成为葡萄集用户，您将拥有一个账号和密码。如果您不保管好自己的账号和密码安全，将负全部责任。 另外，每个用户都要对其账户中的所有活动和事件负全责。您可随时改变您的密码和图标，也可以结束旧的账户重开一个新账户。" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textSize="14sp"
+        android:text="2.某些特殊的个人信息可能被认为是个人敏感信息，例如您的种族、宗教、个人健康和医疗信息等，这些个人敏感信息将受到严格保护。 葡萄集隐私条款在此提醒您，您在使用葡萄集为您提供的产品及服务中所上传或发布的内容和信息可能会泄露您的个人敏感信息。 因此，您需要在使用我们为您提供的产品或服务前谨慎考虑。" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:text="3.葡萄集非常重视信息安全，成立了专门的负责团队。葡萄集使用目前业界高可靠性的服务器软件，支持安全加密协议， 并自主研发多项信息安全技术和专利，采用严格措施最大程度确保用户提供的信息不被非法访问。 用户明确同意其使用携程会员服务所存在的风险将完全由其自己承担。" />
+
+</LinearLayout>
