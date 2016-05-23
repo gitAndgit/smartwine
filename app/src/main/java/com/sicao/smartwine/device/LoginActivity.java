@@ -232,11 +232,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.textView4://忘记密码
                 startActivity(new Intent(this, DeviceInfoActivity.class));
                 break;
-<<<<<<< Temporary merge branch 1
             case R.id.textView5://立即注册
                 startActivity(new Intent(this, RegisterActivity.class));
                 finish();
-=======
             case R.id.tv_code://获取验证码
                 String mphonee=mPhoneView.getText().toString().trim();
                 ApiClient.getLoginCode(mphonee, new ApiCallBack() {
@@ -253,7 +251,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         }
                     }
                 },null);
->>>>>>> Temporary merge branch 2
                 break;
         }
     }
